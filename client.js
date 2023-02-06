@@ -35,7 +35,7 @@ function windowResized() { // If the window is resized
 
 function preload() { // Load sprites
     const PATH = "Sprites/";
-    // CARD_ATTACK = loadImage(PATH + "Cards/attack.png");
+    TEMP = loadImage(PATH + "Player/player.png");
 }
 
 function draw() { // Loop
@@ -49,9 +49,11 @@ function drawImage(sprite, x, y) { // Draws an image but easier
 }
 
 function debug() {
+    noSmooth();
     background(240, 240, 240)
     textSize(32);
     text(canvasWidth, 0, 30);
     text(canvasHeight, 0, 60);
     text(scale, 0, 90);
+    drawImage(TEMP, 320, 180)
 }
