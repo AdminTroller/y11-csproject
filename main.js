@@ -1,5 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
+let overworld;
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -10,11 +11,16 @@ function setup() { // Inital setup
 }
 
 function preload() { // Load sprites
-    const PATH = "Sprites/";
+    PATH = "Sprites/";
     TEMP = loadImage(PATH + "Player/player.png");
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "Player/crosshair.png");
+    
+    PATH = "Audio/";
+    overworld = loadSound(PATH + 'Music/overworld.mp3');
 }
+
+musicTimer = 0;
 
 function draw() { // Loop
     clear();
@@ -22,6 +28,11 @@ function draw() { // Loop
     debug();
     drawCrosshair();
     drawImage(BORDER, 0, 0);
+
+    musicTimer += 1;
+    if (musicTimer == 60) {
+        overworld.loop();
+    } 
 }
 
 function drawImage(sprite, x, y) {
@@ -40,6 +51,7 @@ var tempx = 512
 var tempy = 288
 
 function debug() {
+    imageMode(CORNER)
     background(240, 240, 240)
     drawImage(TEMP, tempx, tempy);
 
@@ -51,4 +63,5 @@ function debug() {
     textSize(32);
     text(mouseX, 10, 40)
     text(mouseY, 10, 70)
+    text(musicTimer, 10, 100)
 }
