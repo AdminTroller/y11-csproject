@@ -25,7 +25,7 @@ function draw() { // Loop
 }
 
 function drawImage(sprite, x, y) {
-    image(sprite, x, y, sprite.width*2, sprite.height*2)
+    image(sprite, x+x%2, y+y%2, sprite.width*2, sprite.height*2)
 }
 
 function drawCrosshair() {
@@ -43,10 +43,10 @@ function debug() {
     background(240, 240, 240)
     drawImage(TEMP, tempx, tempy);
 
-    if (keyIsDown(87)) tempy -= 5; // Up
-    if (keyIsDown(83)) tempy += 5; // Down
-    if (keyIsDown(65)) tempx -= 5; // Left
-    if (keyIsDown(68)) tempx += 5; // Right
+    if (keyIsDown(87)) tempy -= 6; // Up
+    if (keyIsDown(83)) tempy += 6; // Down
+    if (keyIsDown(65)) tempx -= 6; // Left
+    if (keyIsDown(68)) tempx += 6; // Right
 
     textSize(32);
     text(mouseX, 10, 40)
