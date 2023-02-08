@@ -14,6 +14,8 @@ var playerGunCooldowns = [20];
 var playerFiringCooldown = 20;
 var gunAmmo = [10];
 var playerAmmo = [10];
+var gunReload = [60];
+var playerReload = [60];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -84,6 +86,7 @@ function drawCrosshair() {
 function player() {
     playerMovement();
     playerShooting();
+    reload();
 
     imageMode(CENTER);
     drawImage(PLAYER, playerX, playerY);
@@ -99,11 +102,23 @@ function playerMovement() {
 function playerShooting() {
     if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
     if (mouseIsPressed) {
-        if (playerFiringCooldown >= playerGunCooldowns[playerGun]) {
+        if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
             var bullet = new PlayerBullet();
             playerBullets.push(bullet);
             playerFiringCooldown = 0;
             playerAmmo[playerGun] -= 1;
+        }
+    }
+}
+
+function reload() {
+    if (playerReload[playerGun] < gunReload[playerGun]) playerReload[playerGun]++;
+    if (playerReload[playerGun] == gunReload[playerGun] - 1) playerAmmo[playerGun] = gunAmmo[playerGun];
+    if (playerReload[playerGun] < gunReload[playerGun]) text("Reloading...", 10, 70); // temp
+
+    if (keyIsDown(82)) { // R is pressed
+        if (playerReload[playerGun] >= gunReload[playerGun] && playerAmmo[playerGun] < gunAmmo[playerGun]) {
+            playerReload[playerGun] = 0;
         }
     }
 }
@@ -143,7 +158,7 @@ class PlayerBullet {
 
 function debug() {
     textSize(32);
-    // text(state, 10, 40);
+    text(playerAmmo[playerGun], 10, 40);
 
     drawImage(ENEMY, 800, 100);
 }
