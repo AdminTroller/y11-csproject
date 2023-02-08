@@ -14,8 +14,8 @@ var playerGunCooldowns = [20];
 var playerFiringCooldown = 20;
 var gunAmmo = [10];
 var playerAmmo = [10];
-var gunReload = [60];
-var playerReload = [60];
+var gunReload = [40];
+var playerReload = [40];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -33,6 +33,7 @@ function preload() { // Load sprites
     
     PATH = "Audio/";
     overworld = loadSound(PATH + 'Music/overworld.mp3');
+    overworld.setVolume(0.5);
 }
 
 musicTimer = 0;
