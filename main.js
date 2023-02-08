@@ -158,7 +158,7 @@ class PlayerBullet {
 
 function debug() {
     textSize(32);
-    text(playerAmmo[playerGun], 10, 40);
+    text(playerAmmo[playerGun] + " ammo", 10, 40);
 
     drawImage(ENEMY, 800, 100);
 }
