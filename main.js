@@ -17,10 +17,18 @@ var playerAmmo = [10];
 var gunReload = [40];
 var playerReload = [40];
 
+var enemies = [];
+const ENEMY_SPEED = [1.5];
+
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
     frameRate(60);
+    enemies.push(new Enemy(100, 100, 0));
+    enemies.push(new Enemy(100, 200, 0));
+    enemies.push(new Enemy(100, 300, 0));
+    enemies.push(new Enemy(100, 400, 0));
+    enemies.push(new Enemy(100, 500, 0));
 }
 
 function preload() { // Load sprites
@@ -36,7 +44,7 @@ function preload() { // Load sprites
     overworld.setVolume(0.5);
 }
 
-musicTimer = 0;
+var musicTimer = 0;
 
 function draw() { // Loop
     clear();
@@ -45,7 +53,7 @@ function draw() { // Loop
 
     if (state != "click") {
         debug();
-        for (i = 0; i < playerBullets.length; i++) { // Player Bullet Movement
+        for (i = 0; i < playerBullets.length; i++) { // Player Bullets
             var bullet = playerBullets[i];
             bullet.update();
             bullet.draw();
@@ -53,15 +61,15 @@ function draw() { // Loop
             if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) playerBullets.splice(i, 1); // Remove bullet
         }
     
+        enemy();
         player();
-        drawCrosshair();
-    
+
         musicTimer += 1;
         if (musicTimer == 60) {
             overworld.loop();
         }
+        drawCrosshair();
         noCursor();
-    
     }
 
     imageMode(CORNER);
@@ -78,10 +86,8 @@ function drawImageSmooth(sprite, x, y) {
 }
 
 function drawCrosshair() {
-    // if (focused) {
-        imageMode(CENTER);
-        drawImage(CROSSHAIR, mouseX, mouseY);
-    // }
+    imageMode(CENTER);
+    drawImage(CROSSHAIR, mouseX, mouseY);
 }
 
 function player() {
@@ -124,6 +130,20 @@ function reload() {
     }
 }
 
+function enemy() {
+    enemyMovement();
+
+    for (i = 0; i < enemies.length; i++) { // Enemies
+        var enemy = enemies[i];
+        enemy.update();
+        enemy.draw();
+    }
+}
+
+function enemyMovement() {
+
+}
+
 function mouseClicked() {
     if (state == "click") {
         state = "menu";
@@ -157,9 +177,33 @@ class PlayerBullet {
    
 }
 
+class Enemy {
+    constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+    }
+
+    update() {
+        var deltaX = playerX - this.x;
+        var deltaY = playerY - this.y;
+
+        var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
+        var divider = distance / ENEMY_SPEED[this.type];
+        
+        var dx = Math.round(deltaX / divider * 10)/10;
+        var dy = Math.round(deltaY / divider * 10)/10;
+
+        this.x += dx;
+        this.y += dy;
+    }
+
+    draw() {
+        drawImageSmooth(ENEMY, this.x, this.y);
+    }
+}
+
 function debug() {
     textSize(32);
     text(playerAmmo[playerGun] + " ammo", 10, 40);
-
-    drawImage(ENEMY, 800, 100);
 }
