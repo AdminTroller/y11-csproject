@@ -1,6 +1,7 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-let overworld;
+var state = "menu"; // Game state. click, menu, playing
+var overworld;
 
 var playerX = 512;
 var playerY = 288;
@@ -12,7 +13,6 @@ const BULLET_SPEED = 12;
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
-    noCursor();
     frameRate(60);
 }
 
@@ -20,8 +20,9 @@ function preload() { // Load sprites
     PATH = "Sprites/";
     PLAYER = loadImage(PATH + "Player/player.png");
     BORDER = loadImage(PATH + "Background/border.png");
-    CROSSHAIR = loadImage(PATH + "Player/crosshair.png");
+    CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
+    ENEMY = loadImage(PATH + "Enemy/enemy.png");
     
     PATH = "Audio/";
     overworld = loadSound(PATH + 'Music/overworld.mp3');
@@ -32,23 +33,27 @@ musicTimer = 0;
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-    // debug();
     background(240, 240, 240)
 
-    for (i = 0; i < bullets.length; i++) { // Player Bullet Movement
-        var bullet = bullets[i];
-        bullet.update();
-        bullet.draw();
-
-        if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) bullets.splice(i, 1); // Remove bullet
-    }
-
-    player();
-    drawCrosshair();
-
-    musicTimer += 1;
-    if (musicTimer == 60) {
-        overworld.loop();
+    if (state != "click") {
+        debug();
+        for (i = 0; i < bullets.length; i++) { // Player Bullet Movement
+            var bullet = bullets[i];
+            bullet.update();
+            bullet.draw();
+    
+            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) bullets.splice(i, 1); // Remove bullet
+        }
+    
+        player();
+        drawCrosshair();
+    
+        musicTimer += 1;
+        if (musicTimer == 60) {
+            overworld.loop();
+        }
+        noCursor();
+    
     }
 
     imageMode(CORNER);
@@ -85,16 +90,15 @@ function playerMovement() {
     if (keyIsDown(68) && playerX < CANVAS_WIDTH - 24) playerX += playerSpeed; // Right
 }
 
-function debug() {
-    textSize(32);
-    text(mouseX, 10, 40)
-    text(mouseY, 10, 70)
-}
-
 function mouseClicked() {
-    var bullet = new PlayerBullet();
-    bullets.push(bullet);
-    console.log(bullet)
+    if (state == "click") {
+        state = "menu";
+        noCursor();
+    }
+    else {
+        var bullet = new PlayerBullet();
+        bullets.push(bullet);
+    }
 }
 
 class PlayerBullet {
@@ -121,4 +125,11 @@ class PlayerBullet {
         drawImageSmooth(PLAYER_BULLET, this.x, this.y);
     }
    
+}
+
+function debug() {
+    textSize(32);
+    // text(state, 10, 40);
+
+    drawImage(ENEMY, 800, 100);
 }
