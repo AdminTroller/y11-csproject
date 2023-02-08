@@ -7,8 +7,11 @@ var playerX = 512;
 var playerY = 288;
 var playerSpeed = 6;
 
-var bullets = [];
-const BULLET_SPEED = 12;
+var playerBullets = [];
+const PLAYER_BULLET_SPEED = 12;
+var playerGunCooldowns = [20];
+var playerFiringCooldown = 20;
+var playerGun = 0;
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -37,12 +40,12 @@ function draw() { // Loop
 
     if (state != "click") {
         debug();
-        for (i = 0; i < bullets.length; i++) { // Player Bullet Movement
-            var bullet = bullets[i];
+        for (i = 0; i < playerBullets.length; i++) { // Player Bullet Movement
+            var bullet = playerBullets[i];
             bullet.update();
             bullet.draw();
     
-            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) bullets.splice(i, 1); // Remove bullet
+            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) playerBullets.splice(i, 1); // Remove bullet
         }
     
         player();
@@ -78,6 +81,7 @@ function drawCrosshair() {
 
 function player() {
     playerMovement();
+    playerShooting();
 
     imageMode(CENTER);
     drawImage(PLAYER, playerX, playerY);
@@ -90,14 +94,21 @@ function playerMovement() {
     if (keyIsDown(68) && playerX < CANVAS_WIDTH - 24) playerX += playerSpeed; // Right
 }
 
+function playerShooting() {
+    if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
+    if (mouseIsPressed) {
+        if (playerFiringCooldown >= playerGunCooldowns[playerGun]) {
+            var bullet = new PlayerBullet();
+            playerBullets.push(bullet);
+            playerFiringCooldown = 0;
+        }
+    }
+}
+
 function mouseClicked() {
     if (state == "click") {
         state = "menu";
         noCursor();
-    }
-    else {
-        var bullet = new PlayerBullet();
-        bullets.push(bullet);
     }
 }
 
@@ -110,7 +121,7 @@ class PlayerBullet {
         var deltaY = mouseY - this.y;
 
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
-        var divider = distance / BULLET_SPEED;
+        var divider = distance / PLAYER_BULLET_SPEED;
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
