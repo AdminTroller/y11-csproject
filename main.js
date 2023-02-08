@@ -7,11 +7,13 @@ var playerX = 512;
 var playerY = 288;
 var playerSpeed = 6;
 
+var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = 12;
 var playerGunCooldowns = [20];
 var playerFiringCooldown = 20;
-var playerGun = 0;
+var gunAmmo = [10];
+var playerAmmo = [10];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -101,6 +103,7 @@ function playerShooting() {
             var bullet = new PlayerBullet();
             playerBullets.push(bullet);
             playerFiringCooldown = 0;
+            playerAmmo[playerGun] -= 1;
         }
     }
 }
