@@ -4,16 +4,16 @@ let overworld;
 
 var playerX = 512;
 var playerY = 288;
+var playerSpeed = 6;
 
 var bullets = [];
-const BULLET_SPEED = 8;
+const BULLET_SPEED = 12;
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
     noCursor();
     frameRate(60);
-    imageMode(CORNER);
 }
 
 function preload() { // Load sprites
@@ -32,14 +32,19 @@ musicTimer = 0;
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-    debug();
-    playerMovement();
-    drawCrosshair();
+    // debug();
+    background(240, 240, 240)
 
-    for (i = 0; i < bullets.length; i++) {
-        bullets[i].update();
-        bullets[i].draw();
+    for (i = 0; i < bullets.length; i++) { // Player Bullet Movement
+        var bullet = bullets[i];
+        bullet.update();
+        bullet.draw();
+
+        if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) bullets.splice(i, 1); // Remove bullet
     }
+
+    player();
+    drawCrosshair();
 
     musicTimer += 1;
     if (musicTimer == 60) {
@@ -52,7 +57,11 @@ function draw() { // Loop
 }
 
 function drawImage(sprite, x, y) {
-    image(sprite, x+x%2, y+y%2, sprite.width*2, sprite.height*2)
+    image(sprite, x+x%2, y+y%2, sprite.width*2, sprite.height*2);
+}
+
+function drawImageSmooth(sprite, x, y) {
+    image(sprite, x, y, sprite.width*2, sprite.height*2);
 }
 
 function drawCrosshair() {
@@ -62,19 +71,21 @@ function drawCrosshair() {
     // }
 }
 
-function playerMovement() {
+function player() {
+    playerMovement();
+
     imageMode(CENTER);
     drawImage(PLAYER, playerX, playerY);
-    if (keyIsDown(87)) playerY -= 6; // Up
-    if (keyIsDown(83)) playerY += 6; // Down
-    if (keyIsDown(65)) playerX -= 6; // Left
-    if (keyIsDown(68)) playerX += 6; // Right
+}
+
+function playerMovement() {
+    if (keyIsDown(87) && playerY > 24) playerY -= playerSpeed; // Up
+    if (keyIsDown(83) && playerY < CANVAS_HEIGHT - 24) playerY += playerSpeed; // Down
+    if (keyIsDown(65) && playerX > 24) playerX -= playerSpeed; // Left
+    if (keyIsDown(68) && playerX < CANVAS_WIDTH - 24) playerX += playerSpeed; // Right
 }
 
 function debug() {
-    imageMode(CENTER)
-    background(240, 240, 240)
-
     textSize(32);
     text(mouseX, 10, 40)
     text(mouseY, 10, 70)
@@ -83,7 +94,7 @@ function debug() {
 function mouseClicked() {
     var bullet = new PlayerBullet();
     bullets.push(bullet);
-    console.log(bullet);
+    console.log(bullet)
 }
 
 class PlayerBullet {
@@ -97,8 +108,8 @@ class PlayerBullet {
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
         var divider = distance / BULLET_SPEED;
         
-        this.dx = deltaX / divider;
-        this.dy = deltaY / divider;
+        this.dx = Math.round(deltaX / divider * 10)/10;
+        this.dy = Math.round(deltaY / divider * 10)/10;
     }
 
     update() {
@@ -107,7 +118,7 @@ class PlayerBullet {
     }
 
     draw() {
-        drawImage(PLAYER_BULLET, this.x, this.y);
+        drawImageSmooth(PLAYER_BULLET, this.x, this.y);
     }
    
 }
