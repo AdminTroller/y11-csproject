@@ -35,7 +35,9 @@ function preload() { // Load sprites
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
+
     ENEMY = loadImage(PATH + "Enemy/enemy.png");
+    ENEMY_HURT = loadImage(PATH + "Enemy/enemy_hurt.png");
     
     PATH = "Audio/";
     overworld = loadSound(PATH + 'Music/overworld.mp3');
@@ -219,7 +221,8 @@ class Enemy {
 
     hurt() {
         this.playerBullets = playerBullets;
-        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) this.hurtTime++;
+        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) this.hurtTime++; // During hurt
+    
 
         if (playerBullets.length > 0) {
             for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
@@ -233,7 +236,6 @@ class Enemy {
             }
         }
 
-
         if (this.health <= 0) this.die();
     }
 
@@ -242,7 +244,8 @@ class Enemy {
     }
 
     draw() {
-        drawImageSmooth(ENEMY, this.x, this.y);
+        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_HURT, this.x, this.y);
+        else drawImageSmooth(ENEMY, this.x, this.y);
     }
 }
 
