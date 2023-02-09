@@ -25,7 +25,7 @@ function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
     frameRate(60);
-    // enemies.push(new Enemy(100, 100, 0));
+    enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
 }
 
@@ -108,7 +108,7 @@ function playerShooting() {
         }
     }
 
-    for (i = 0; i < playerBullets.length; i++) { // Player Bullets
+    for (var i = 0; i < playerBullets.length; i++) { // Player Bullets
         var bullet = playerBullets[i];
         bullet.update();
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
@@ -131,7 +131,7 @@ function reload() {
 }
 
 function enemy() {
-    for (i = 0; i < enemies.length; i++) { // Enemies
+    for (var i = 0; i < enemies.length; i++) { // Enemies
         var enemy = enemies[i];
         enemy.update();
     }
@@ -218,16 +218,22 @@ class Enemy {
     }
 
     hurt() {
+        this.playerBullets = playerBullets;
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) this.hurtTime++;
 
-        for (i = 0; i < playerBullets.length; i++) { // Check bullet collision
-            var bullet = playerBullets[i];
-            if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
-                this.health -= 1;
-                this.hurtTime = 0;
-                playerBullets.splice(i, 1);
+        if (playerBullets.length > 0) {
+            for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
+                var bullet = playerBullets[i];
+                if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
+                    this.health -= 1;
+                    this.hurtTime = 0;
+                    playerBullets.splice(i, 1);
+                    i--;
+                }
             }
         }
+
+
         if (this.health <= 0) this.die();
     }
 
