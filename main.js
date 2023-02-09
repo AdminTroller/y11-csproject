@@ -19,16 +19,14 @@ var playerReload = [40];
 
 var enemies = [];
 const ENEMY_SPEED = [1.5];
+const ENEMY_HURT_TIME_BASE = [30];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
     frameRate(60);
-    enemies.push(new Enemy(100, 100, 0));
+    // enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(100, 300, 0));
-    enemies.push(new Enemy(100, 400, 0));
-    enemies.push(new Enemy(100, 500, 0));
 }
 
 function preload() { // Load sprites
@@ -53,13 +51,6 @@ function draw() { // Loop
 
     if (state != "click") {
         debug();
-        for (i = 0; i < playerBullets.length; i++) { // Player Bullets
-            var bullet = playerBullets[i];
-            bullet.update();
-            bullet.draw();
-    
-            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) playerBullets.splice(i, 1); // Remove bullet
-        }
     
         enemy();
         player();
@@ -116,6 +107,15 @@ function playerShooting() {
             playerAmmo[playerGun] -= 1;
         }
     }
+
+    for (i = 0; i < playerBullets.length; i++) { // Player Bullets
+        var bullet = playerBullets[i];
+        bullet.update();
+        if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
+            playerBullets.splice(i, 1); // Remove bullet
+            i--;
+        } 
+    }
 }
 
 function reload() {
@@ -131,17 +131,10 @@ function reload() {
 }
 
 function enemy() {
-    enemyMovement();
-
     for (i = 0; i < enemies.length; i++) { // Enemies
         var enemy = enemies[i];
         enemy.update();
-        enemy.draw();
     }
-}
-
-function enemyMovement() {
-
 }
 
 function mouseClicked() {
@@ -158,7 +151,6 @@ class PlayerBullet {
 
         var deltaX = mouseX - this.x;
         var deltaY = mouseY - this.y;
-
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
         var divider = distance / PLAYER_BULLET_SPEED;
         
@@ -167,6 +159,11 @@ class PlayerBullet {
     }
 
     update() {
+        this.move();
+        this.draw();
+    }
+
+    move() {
         this.x += this.dx;
         this.y += this.dy;
     }
@@ -182,9 +179,24 @@ class Enemy {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.dead = false;
+
+        if (this.type == 0) {
+            this.health = 4;
+        }
+
+        this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
     }
 
     update() {
+        if (!this.dead) {
+            this.move();
+            this.hurt();
+            this.draw();
+        }
+    }
+
+    move() {
         var deltaX = playerX - this.x;
         var deltaY = playerY - this.y;
 
@@ -194,8 +206,33 @@ class Enemy {
         var dx = Math.round(deltaX / divider * 10)/10;
         var dy = Math.round(deltaY / divider * 10)/10;
 
-        this.x += dx;
-        this.y += dy;
+        if (this.hurtTime >= ENEMY_HURT_TIME_BASE[this.type]) {
+            this.x += dx;
+            this.y += dy;
+        }
+        else {
+            this.x += dx/4;
+            this.y += dy/4;
+        }
+        
+    }
+
+    hurt() {
+        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) this.hurtTime++;
+
+        for (i = 0; i < playerBullets.length; i++) { // Check bullet collision
+            var bullet = playerBullets[i];
+            if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
+                this.health -= 1;
+                this.hurtTime = 0;
+                playerBullets.splice(i, 1);
+            }
+        }
+        if (this.health <= 0) this.die();
+    }
+
+    die() {
+        this.dead = true;
     }
 
     draw() {
