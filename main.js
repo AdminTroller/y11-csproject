@@ -1,24 +1,26 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
 var state = "menu"; // Game state. click, menu, playing
-var overworld;
 
 var playerX = 512;
 var playerY = 288;
-var playerSpeed = 5;
+var playerSpeed = 4.5;
+var playerHealth = 6;
+const PLAYER_HURT_TIME_BASE = 60;
+var playerHurtTime = PLAYER_HURT_TIME_BASE;
 
 var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = 12;
 var playerGunCooldowns = [20];
-var playerFiringCooldown = 20;
+var playerFiringCooldown = playerGunCooldowns[0];
 var gunAmmo = [10];
-var playerAmmo = [10];
+var playerAmmo = [gunAmmo[0]];
 var gunReload = [40];
 var playerReload = [40];
 
 var enemies = [];
-const ENEMY_SPEED = [1.5, 4];
+const ENEMY_SPEED = [1.5, 3.5];
 const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [60, 0];
@@ -35,12 +37,19 @@ function setup() { // Inital setup
     frameRate(60);
     enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
+    enemies.push(new Enemy(100, 300, 0));
+    enemies.push(new Enemy(100, 400, 0));
+    enemies.push(new Enemy(800, 300, 0));
+    enemies.push(new Enemy(800, 400, 0));
     enemies.push(new Enemy(800, 200, 1));
+    enemies.push(new Enemy(100, 450, 1));
 }
 
 function preload() { // Load sprites
     PATH = "Sprites/";
     PLAYER = loadImage(PATH + "Player/player.png");
+    PLAYER_HURT = loadImage(PATH + "Player/player_hurt.png");
+
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
@@ -57,8 +66,8 @@ function preload() { // Load sprites
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
     
     PATH = "Audio/";
-    overworld = loadSound(PATH + 'Music/overworld.mp3');
-    overworld.setVolume(0.5);
+    OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
+    OVERWORLD.setVolume(0.5);
 }
 
 var musicTimer = 0;
@@ -66,7 +75,7 @@ var musicTimer = 0;
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-    background(240, 240, 240)
+    background(240, 240, 240);
 
     if (state != "click") {
         debug();
@@ -76,7 +85,7 @@ function draw() { // Loop
 
         musicTimer += 1;
         if (musicTimer == 60) {
-            overworld.loop();
+            OVERWORLD.loop();
         }
         drawCrosshair();
         noCursor();
@@ -104,9 +113,8 @@ function player() {
     playerMovement();
     playerShooting();
     reload();
-
-    imageMode(CENTER);
-    drawImageSmooth(PLAYER, playerX, playerY);
+    playerHurt();
+    playerDraw();
 }
 
 function playerMovement() {
@@ -140,7 +148,7 @@ function playerShooting() {
 function reload() {
     if (playerReload[playerGun] < gunReload[playerGun]) playerReload[playerGun]++;
     if (playerReload[playerGun] == gunReload[playerGun] - 1) playerAmmo[playerGun] = gunAmmo[playerGun];
-    if (playerReload[playerGun] < gunReload[playerGun]) text("Reloading...", 10, 70); // temp
+    if (playerReload[playerGun] < gunReload[playerGun]) text("Reloading...", 10, 530); // temp
 
     if (keyIsDown(82)) { // R is pressed
         if (playerReload[playerGun] >= gunReload[playerGun] && playerAmmo[playerGun] < gunAmmo[playerGun]) {
@@ -149,12 +157,29 @@ function reload() {
     }
 }
 
-function enemy() {
-    for (var i = 0; i < enemies.length; i++) { // Enemies
-        var enemy = enemies[i];
-        enemy.update();
-    }
+function playerHurt() {
+    if (playerHurtTime < PLAYER_HURT_TIME_BASE) playerHurtTime++; // During hurt
+        if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
+            for (var i = 0; i < enemyBullets.length; i++) { // Check bullet collision
+                var bullet = enemyBullets[i];
+                if (Math.abs(bullet.x - playerX) <= 30 && Math.abs(bullet.y - playerY) <= 30) {
+                    playerHealth -= 1;
+                    playerHurtTime = 0;
+                    enemyBullets.splice(i, 1);
+                    i--;
+                    break;
+                }
+            }
+        }   
+        
+}
 
+function playerDraw() {
+    if (playerHurtTime >= PLAYER_HURT_TIME_BASE) drawImageSmooth(PLAYER, playerX, playerY);
+    else drawImageSmooth(PLAYER_HURT, playerX, playerY);
+}
+
+function enemy() {
     for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
         var bullet = enemyBullets[i];
         bullet.update();
@@ -162,6 +187,11 @@ function enemy() {
             enemyBullets.splice(i, 1); // Remove bullet
             i--;
         }
+    }
+
+    for (var i = 0; i < enemies.length; i++) { // Enemies
+        var enemy = enemies[i];
+        enemy.update();
     }
 }
 
@@ -268,17 +298,15 @@ class Enemy {
             this.hurtTime++; 
             this.firingCooldown = 0;
         }
-    
 
-        if (playerBullets.length > 0) {
-            for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
-                var bullet = playerBullets[i];
-                if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
-                    this.health -= 1;
-                    this.hurtTime = 0;
-                    playerBullets.splice(i, 1);
-                    i--;
-                }
+        for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
+            var bullet = playerBullets[i];
+            if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
+                this.health -= 1;
+                this.hurtTime = 0;
+                playerBullets.splice(i, 1);
+                i--;
+                break;
             }
         }
 
@@ -336,5 +364,6 @@ class EnemyBullet {
 
 function debug() {
     textSize(32);
-    text(playerAmmo[playerGun] + " ammo", 10, 40);
+    text(playerAmmo[playerGun] + " ammo", 10, 560);
+    text(playerHealth + " health", 10, 40);
 }
