@@ -40,8 +40,12 @@ function preload() { // Load sprites
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
 
-    ENEMY = loadImage(PATH + "Enemy/enemy.png");
-    ENEMY_HURT = loadImage(PATH + "Enemy/enemy_hurt.png");
+    ENEMY0 = loadImage(PATH + "Enemy/enemy0.png");
+    ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
+    ENEMY1 = loadImage(PATH + "Enemy/enemy1.png");
+    ENEMY1_HURT = loadImage(PATH + "Enemy/enemy1.png");
+    ENEMY_SPRITES = [ENEMY0, ENEMY1]
+    ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT]
     
     PATH = "Audio/";
     overworld = loadSound(PATH + 'Music/overworld.mp3');
@@ -263,8 +267,8 @@ class Enemy {
     }
 
     draw() {
-        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_HURT, this.x, this.y);
-        else drawImageSmooth(ENEMY, this.x, this.y);
+        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_HURT_SPRITES[this.type], this.x, this.y);
+        else drawImageSmooth(ENEMY_SPRITES[this.type], this.x, this.y);
     }
 }
 
