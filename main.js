@@ -5,7 +5,7 @@ var overworld;
 
 var playerX = 512;
 var playerY = 288;
-var playerSpeed = 6;
+var playerSpeed = 5;
 
 var playerGun = 0;
 var playerBullets = [];
@@ -106,7 +106,7 @@ function player() {
     reload();
 
     imageMode(CENTER);
-    drawImage(PLAYER, playerX, playerY);
+    drawImageSmooth(PLAYER, playerX, playerY);
 }
 
 function playerMovement() {
@@ -290,7 +290,7 @@ class Enemy {
         if (this.firingCooldown >= ENEMY_FIRING_COOLDOWN_BASE[this.type]) {
             var bullet = new EnemyBullet(this.x, this.y, this.type);
             enemyBullets.push(bullet);
-            this.firingCooldown = Math.random() * 10;
+            this.firingCooldown = Math.random() * 10 - 5;
         }
     }
 
