@@ -25,8 +25,8 @@ const ENEMY_SPREAD_DISTANCE = [60, 0];
 const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 15];
 
 var enemyBullets = [];
-const ENEMY_BULLET_SPEED = [5, -1];
-const ENEMY_FIRING_COOLDOWN_BASE = [20];
+const ENEMY_BULLET_SPEED = [5, 10];
+const ENEMY_FIRING_COOLDOWN_BASE = [60];
 var enemyFiringCooldown = 0;
 
 function setup() { // Inital setup
@@ -154,6 +154,15 @@ function enemy() {
         var enemy = enemies[i];
         enemy.update();
     }
+
+    for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
+        var bullet = enemyBullets[i];
+        bullet.update();
+        if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
+            enemyBullets.splice(i, 1); // Remove bullet
+            i--;
+        }
+    }
 }
 
 function mouseClicked() {
@@ -199,8 +208,9 @@ class Enemy {
         this.x = x;
         this.y = y;
         this.type = type;
-        this.health = ENEMY_HEALTH[this.type]
+        this.health = ENEMY_HEALTH[this.type];
         this.dead = false;
+        this.firingCooldown = 0;
 
         this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
     }
@@ -254,7 +264,10 @@ class Enemy {
 
     hurt() {
         this.playerBullets = playerBullets;
-        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) this.hurtTime++; // During hurt
+        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
+            this.hurtTime++; 
+            this.firingCooldown = 0;
+        }
     
 
         if (playerBullets.length > 0) {
@@ -273,20 +286,11 @@ class Enemy {
     }
 
     shoot() {
-        if (mouseIsPressed) {
+        if (this.firingCooldown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
+        if (this.firingCooldown >= ENEMY_FIRING_COOLDOWN_BASE[this.type]) {
             var bullet = new EnemyBullet(this.x, this.y, this.type);
             enemyBullets.push(bullet);
-            // playerFiringCooldown = 0;
-            // playerAmmo[playerGun] -= 1;
-        }
-
-        for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
-            var bullet = enemyBullets[i];
-            bullet.update();
-            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
-                enemyBullets.splice(i, 1); // Remove bullet
-                i--;
-            } 
+            this.firingCooldown = Math.random() * 10;
         }
     }
 
