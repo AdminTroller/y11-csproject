@@ -166,6 +166,18 @@ function playerHurt() {
             break;
         }
     }
+
+    for (var i = 0; i < enemies.length; i++) { // Check enemy collision
+        var enemy = enemies[i];
+        if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 30) {
+            if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
+                playerHealth -= 1;
+                playerHurtTime = 0;
+                if (enemy.type == 1) enemy.die();
+                break;
+            }
+        }
+    }
 }
 
 function playerDraw() {
