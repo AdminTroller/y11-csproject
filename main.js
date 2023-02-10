@@ -18,10 +18,11 @@ var gunReload = [40];
 var playerReload = [40];
 
 var enemies = [];
-const ENEMY_SPEED = [1.5];
-const ENEMY_HURT_TIME_BASE = [30];
-const ENEMY_SPREAD_DISTANCE = 60;
-const ENEMY_SPREAD_PLAYER_DISTANCE = 80;
+const ENEMY_SPEED = [1.5, 4];
+const ENEMY_HEALTH = [4, 1];
+const ENEMY_HURT_TIME_BASE = [30, 20];
+const ENEMY_SPREAD_DISTANCE = [60, 0];
+const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 15];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -29,7 +30,7 @@ function setup() { // Inital setup
     frameRate(60);
     enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(800, 200, 0));
+    enemies.push(new Enemy(800, 200, 1));
 }
 
 function preload() { // Load sprites
@@ -83,7 +84,7 @@ function drawImageSmooth(sprite, x, y) {
 
 function drawCrosshair() {
     imageMode(CENTER);
-    drawImage(CROSSHAIR, mouseX, mouseY);
+    drawImageSmooth(CROSSHAIR, mouseX, mouseY);
 }
 
 function player() {
@@ -185,11 +186,8 @@ class Enemy {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.health = ENEMY_HEALTH[this.type]
         this.dead = false;
-
-        if (this.type == 0) {
-            this.health = 4;
-        }
 
         this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
     }
@@ -212,12 +210,17 @@ class Enemy {
         var dx = Math.round(deltaX / divider * 10)/10;
         var dy = Math.round(deltaY / divider * 10)/10;
 
-        for (var i = 0; i < enemies.length; i++) { // Check collision with other enemies
+        for (var i = 0; i < enemies.length; i++) { // Check collision
             var enemy = enemies[i];
-            if (i != this.id && !enemy.dead) {
-                var tempX = this.x + dx*10;
-                var tempY = this.y + dy*10;
-                if ((Math.abs(enemy.x - tempX) < ENEMY_SPREAD_DISTANCE && Math.abs(enemy.y - tempY) < ENEMY_SPREAD_DISTANCE) || (Math.abs(playerX - tempX) < ENEMY_SPREAD_PLAYER_DISTANCE && Math.abs(playerY - tempY) < ENEMY_SPREAD_PLAYER_DISTANCE)) {
+            var tempX = this.x + dx*5;
+            var tempY = this.y + dy*5;
+            if (Math.abs(playerX - tempX) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type] && Math.abs(playerY - tempY) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type]) { // Check collision with player
+                dx = 0;
+                dy = 0;
+                break;
+            }
+            if (i != this.id && !enemy.dead) { // Check collision with other enemies
+                if (Math.abs(enemy.x - tempX) < ENEMY_SPREAD_DISTANCE[this.type] && Math.abs(enemy.y - tempY) < ENEMY_SPREAD_DISTANCE[this.type]) {
                     dx = 0;
                     dy = 0;
                     break;
