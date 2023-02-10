@@ -37,12 +37,7 @@ function setup() { // Inital setup
     frameRate(60);
     enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(100, 300, 0));
-    enemies.push(new Enemy(100, 400, 0));
-    enemies.push(new Enemy(800, 300, 0));
-    enemies.push(new Enemy(800, 400, 0));
-    enemies.push(new Enemy(800, 200, 1));
-    enemies.push(new Enemy(100, 450, 1));
+    enemies.push(new Enemy(800, 450, 1));
 }
 
 function preload() { // Load sprites
@@ -159,19 +154,18 @@ function reload() {
 
 function playerHurt() {
     if (playerHurtTime < PLAYER_HURT_TIME_BASE) playerHurtTime++; // During hurt
-        if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
-            for (var i = 0; i < enemyBullets.length; i++) { // Check bullet collision
-                var bullet = enemyBullets[i];
-                if (Math.abs(bullet.x - playerX) <= 30 && Math.abs(bullet.y - playerY) <= 30) {
-                    playerHealth -= 1;
-                    playerHurtTime = 0;
-                    enemyBullets.splice(i, 1);
-                    i--;
-                    break;
-                }
+    for (var i = 0; i < enemyBullets.length; i++) { // Check bullet collision
+        var bullet = enemyBullets[i];
+        if (Math.abs(bullet.x - playerX) <= 30 && Math.abs(bullet.y - playerY) <= 30) {
+            if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
+                playerHealth -= 1;
+                playerHurtTime = 0;
             }
-        }   
-        
+            enemyBullets.splice(i, 1);
+            i--;
+            break;
+        }
+    }
 }
 
 function playerDraw() {
