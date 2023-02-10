@@ -20,6 +20,8 @@ var playerReload = [40];
 var enemies = [];
 const ENEMY_SPEED = [1.5];
 const ENEMY_HURT_TIME_BASE = [30];
+const ENEMY_SPREAD_DISTANCE = 60;
+const ENEMY_SPREAD_PLAYER_DISTANCE = 80;
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -215,7 +217,7 @@ class Enemy {
             if (i != this.id && !enemy.dead) {
                 var tempX = this.x + dx*10;
                 var tempY = this.y + dy*10;
-                if (Math.abs(enemy.x - tempX) < 60 && Math.abs(enemy.y - tempY) < 60) {
+                if ((Math.abs(enemy.x - tempX) < ENEMY_SPREAD_DISTANCE && Math.abs(enemy.y - tempY) < ENEMY_SPREAD_DISTANCE) || (Math.abs(playerX - tempX) < ENEMY_SPREAD_PLAYER_DISTANCE && Math.abs(playerY - tempY) < ENEMY_SPREAD_PLAYER_DISTANCE)) {
                     dx = 0;
                     dy = 0;
                     break;
