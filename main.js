@@ -27,6 +27,7 @@ function setup() { // Inital setup
     frameRate(60);
     enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
+    enemies.push(new Enemy(800, 200, 0));
 }
 
 function preload() { // Load sprites
@@ -178,6 +179,7 @@ class PlayerBullet {
 
 class Enemy {
     constructor(x, y, type) {
+        this.id = enemies.length;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -208,6 +210,18 @@ class Enemy {
         var dx = Math.round(deltaX / divider * 10)/10;
         var dy = Math.round(deltaY / divider * 10)/10;
 
+        for (var i = 0; i < enemies.length; i++) { // Check collision with other enemies
+            var enemy = enemies[i];
+            if (i != this.id && !enemy.dead) {
+                var tempX = this.x + dx*10;
+                var tempY = this.y + dy*10;
+                if (Math.abs(enemy.x - tempX) < 60 && Math.abs(enemy.y - tempY) < 60) {
+                    dx = 0;
+                    dy = 0;
+                    break;
+                }
+            }
+        }
         if (this.hurtTime >= ENEMY_HURT_TIME_BASE[this.type]) {
             this.x += dx;
             this.y += dy;
