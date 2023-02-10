@@ -24,6 +24,11 @@ const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [60, 0];
 const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 15];
 
+var enemyBullets = [];
+const ENEMY_BULLET_SPEED = [5, -1];
+const ENEMY_FIRING_COOLDOWN_BASE = [20];
+var enemyFiringCooldown = 0;
+
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
@@ -44,8 +49,12 @@ function preload() { // Load sprites
     ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
     ENEMY1 = loadImage(PATH + "Enemy/enemy1.png");
     ENEMY1_HURT = loadImage(PATH + "Enemy/enemy1.png");
-    ENEMY_SPRITES = [ENEMY0, ENEMY1]
-    ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT]
+    ENEMY_SPRITES = [ENEMY0, ENEMY1];
+    ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
+
+    ENEMY0_BULLET = loadImage(PATH + "Enemy/bullet0.png");
+    ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
+    ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
     
     PATH = "Audio/";
     overworld = loadSound(PATH + 'Music/overworld.mp3');
@@ -201,6 +210,7 @@ class Enemy {
             this.move();
             this.hurt();
             this.draw();
+            this.shoot();
         }
     }
 
@@ -262,6 +272,24 @@ class Enemy {
         if (this.health <= 0) this.die();
     }
 
+    shoot() {
+        if (mouseIsPressed) {
+            var bullet = new EnemyBullet(this.x, this.y, this.type);
+            enemyBullets.push(bullet);
+            // playerFiringCooldown = 0;
+            // playerAmmo[playerGun] -= 1;
+        }
+
+        for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
+            var bullet = enemyBullets[i];
+            bullet.update();
+            if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
+                enemyBullets.splice(i, 1); // Remove bullet
+                i--;
+            } 
+        }
+    }
+
     die() {
         this.dead = true;
     }
@@ -269,6 +297,36 @@ class Enemy {
     draw() {
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_HURT_SPRITES[this.type], this.x, this.y);
         else drawImageSmooth(ENEMY_SPRITES[this.type], this.x, this.y);
+    }
+}
+
+class EnemyBullet {
+    constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+
+        var deltaX = playerX - this.x;
+        var deltaY = playerY - this.y;
+        var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
+        var divider = distance / ENEMY_BULLET_SPEED[this.type];
+        
+        this.dx = Math.round(deltaX / divider * 10)/10;
+        this.dy = Math.round(deltaY / divider * 10)/10;
+    }
+
+    update() {
+        this.move();
+        this.draw();
+    }
+
+    move() {
+        this.x += this.dx;
+        this.y += this.dy;
+    }
+
+    draw() {
+        drawImageSmooth(ENEMY_BULLET_SPRITES[this.type], this.x, this.y);
     }
 }
 
