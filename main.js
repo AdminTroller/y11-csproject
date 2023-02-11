@@ -31,6 +31,27 @@ const ENEMY_BULLET_SPEED = [5, 10];
 const ENEMY_FIRING_COOLDOWN_BASE = [60];
 var enemyFiringCooldown = 0;
 
+const LEVEL1_1 = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+];
+
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
@@ -63,6 +84,8 @@ function preload() { // Load sprites
     ENEMY0_BULLET = loadImage(PATH + "Enemy/bullet0.png");
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
+
+    TILE1 = loadImage(PATH + "Tiles/tile1.png");
     
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
@@ -79,6 +102,7 @@ function draw() { // Loop
     if (state != "click") {
         debug();
     
+        tiles();
         enemy();
         player();
         ui();
@@ -164,6 +188,7 @@ function playerShooting() {
 function reload() {
     if (playerReload[playerGun] < gunReload[playerGun]) playerReload[playerGun]++;
     if (playerReload[playerGun] == gunReload[playerGun] - 1) playerAmmo[playerGun] = gunAmmo[playerGun];
+    text(playerAmmo[playerGun] + " ammo", 10, 560);
     if (playerReload[playerGun] < gunReload[playerGun]) text("Reloading...", 10, 530); // temp
 
     if (keyIsDown(82)) { // R is pressed
@@ -224,6 +249,14 @@ function enemy() {
     for (var i = 0; i < enemies.length; i++) { // Enemies
         var enemy = enemies[i];
         enemy.update();
+    }
+}
+
+function tiles() {
+    for(var y = 0; y < LEVEL1_1.length; y++) {
+        for (var x = 0; x < LEVEL1_1[y].length; x++) {
+            if (LEVEL1_1[y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
+        }
     }
 }
 
@@ -396,6 +429,5 @@ class EnemyBullet {
 
 function debug() {
     textSize(32);
-    text(playerAmmo[playerGun] + " ammo", 10, 560);
-    // text(playerHealth + " health", 10, 40);
+    // text(playerHealth, 10, 40);
 }
