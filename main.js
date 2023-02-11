@@ -49,6 +49,10 @@ function preload() { // Load sprites
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
 
+    FULL_HEART = loadImage(PATH + "UI/full_heart.png");
+    HALF_HEART = loadImage(PATH + "UI/half_heart.png");
+    EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
+
     ENEMY0 = loadImage(PATH + "Enemy/enemy0.png");
     ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
     ENEMY1 = loadImage(PATH + "Enemy/enemy1.png");
@@ -77,6 +81,7 @@ function draw() { // Loop
     
         enemy();
         player();
+        ui();
 
         musicTimer += 1;
         if (musicTimer == 60) {
@@ -102,6 +107,22 @@ function drawImageSmooth(sprite, x, y) {
 function drawCrosshair() {
     imageMode(CENTER);
     drawImageSmooth(CROSSHAIR, mouseX, mouseY);
+}
+
+function ui() {
+    uiHearts();
+}
+
+function uiHearts() {
+    drawImage(EMPTY_HEART, 30, 30);
+    drawImage(EMPTY_HEART, 82, 30);
+    drawImage(EMPTY_HEART, 134, 30);
+    if (playerHealth >= 1) drawImage(HALF_HEART, 30, 30);
+    if (playerHealth >= 2) drawImage(FULL_HEART, 30, 30);
+    if (playerHealth >= 3) drawImage(HALF_HEART, 82, 30);
+    if (playerHealth >= 4) drawImage(FULL_HEART, 82, 30);
+    if (playerHealth >= 5) drawImage(HALF_HEART, 134, 30);
+    if (playerHealth >= 6) drawImage(FULL_HEART, 134, 30);
 }
 
 function player() {
@@ -160,6 +181,7 @@ function playerHurt() {
             if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
                 playerHealth -= 1;
                 playerHurtTime = 0;
+                if (playerHealth <= 0) playerDie();
             }
             enemyBullets.splice(i, 1);
             i--;
@@ -169,7 +191,7 @@ function playerHurt() {
 
     for (var i = 0; i < enemies.length; i++) { // Check enemy collision
         var enemy = enemies[i];
-        if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 30 && !enemy.dead) {
+        if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 48 && !enemy.dead) {
             if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
                 playerHealth -= 1;
                 playerHurtTime = 0;
@@ -178,6 +200,10 @@ function playerHurt() {
             }
         }
     }
+}
+
+function playerDie() {
+    console.log("you died");
 }
 
 function playerDraw() {
@@ -371,5 +397,5 @@ class EnemyBullet {
 function debug() {
     textSize(32);
     text(playerAmmo[playerGun] + " ammo", 10, 560);
-    text(playerHealth + " health", 10, 40);
+    // text(playerHealth + " health", 10, 40);
 }
