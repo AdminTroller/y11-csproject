@@ -169,7 +169,7 @@ function playerHurt() {
 
     for (var i = 0; i < enemies.length; i++) { // Check enemy collision
         var enemy = enemies[i];
-        if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 30) {
+        if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 30 && !enemy.dead) {
             if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
                 playerHealth -= 1;
                 playerHurtTime = 0;
