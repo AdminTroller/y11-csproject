@@ -352,6 +352,7 @@ class Enemy {
         this.type = type;
         this.health = ENEMY_HEALTH[this.type];
         this.dead = false;
+        this.seePlayer = false;
         this.firingCooldown = 0;
 
         this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
@@ -359,10 +360,14 @@ class Enemy {
 
     update() {
         if (!this.dead) {
-            this.move();
+            if (this.seePlayer) {
+                this.move();
+                this.shoot();
+            }
+            
             this.hurt();
             this.draw();
-            this.shoot();
+            this.vision();
         }
     }
 
@@ -458,6 +463,31 @@ class Enemy {
 
     die() {
         this.dead = true;
+    }
+
+    vision() {
+        this.seePlayer = true;
+        var deltaX = playerX - this.x;
+        var deltaY = playerY - this.y;
+        var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
+        var divider = distance / 5;
+        var tempX = this.x;
+        var tempY = this.y
+        
+        while (Math.abs(tempX - playerX) > 40 || Math.abs(tempY - playerY) > 40) {
+            for (var y = 0; y < LEVEL1_1.length; y++) {
+                for (var x = 0; x < LEVEL1_1[y].length; x++) {
+                    if (LEVEL1_1[y][x] > 0) {
+                        if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
+                            this.seePlayer = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            tempX += deltaX / divider;
+            tempY += deltaY / divider;
+        }
     }
 
     draw() {
