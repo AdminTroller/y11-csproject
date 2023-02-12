@@ -354,6 +354,29 @@ class Enemy {
         var dx = Math.round(deltaX / divider * 10)/10;
         var dy = Math.round(deltaY / divider * 10)/10;
 
+        var okX = true;
+        var okY = true;
+        var tempX = this.x + dx;
+        var tempY = this.y + dy;
+
+        for (var y = 0; y < LEVEL1_1.length; y++) {
+            for (var x = 0; x < LEVEL1_1[y].length; x++) {
+                if (LEVEL1_1[y][x] > 0) {
+                    if (Math.abs(tempX - (x*32+16)) < 26 && Math.abs(this.y - (y*32+16)) < 36) {
+                        okX = false;
+                        break;
+                    }
+                    if (Math.abs(this.x - (x*32+16)) < 26 && Math.abs(tempY - (y*32+16)) < 36) {
+                        okY = false;
+                    }
+                }
+            }
+        }
+
+        if (!okX) dx = 0;
+        if (!okY) dy = 0;
+
+
         for (var i = 0; i < enemies.length; i++) { // Check collision
             var enemy = enemies[i];
             var tempX = this.x + dx*5;
