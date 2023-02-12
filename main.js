@@ -203,9 +203,20 @@ function playerShooting() {
     for (var i = 0; i < playerBullets.length; i++) { // Player Bullets
         var bullet = playerBullets[i];
         bullet.update();
+
+        for (var y = 0; y < LEVEL1_1.length; y++) {
+            for (var x = 0; x < LEVEL1_1[y].length; x++) {
+                if (LEVEL1_1[y][x] > 0) {
+                    if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
+                        playerBullets.splice(i, 1); // Remove bullet
+                        break;
+                    }
+                }
+            }
+        }
+
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
             playerBullets.splice(i, 1); // Remove bullet
-            i--;
         } 
     }
 }
@@ -234,7 +245,6 @@ function playerHurt() {
                 if (playerHealth <= 0) playerDie();
             }
             enemyBullets.splice(i, 1);
-            i--;
             break;
         }
     }
@@ -265,6 +275,18 @@ function enemy() {
     for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
         var bullet = enemyBullets[i];
         bullet.update();
+
+        for (var y = 0; y < LEVEL1_1.length; y++) {
+            for (var x = 0; x < LEVEL1_1[y].length; x++) {
+                if (LEVEL1_1[y][x] > 0) {
+                    if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
+                        enemyBullets.splice(i, 1); // Remove bullet
+                        break;
+                    }
+                }
+            }
+        }
+
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
             enemyBullets.splice(i, 1); // Remove bullet
             i--;
@@ -418,7 +440,6 @@ class Enemy {
                 this.health -= 1;
                 this.hurtTime = 0;
                 playerBullets.splice(i, 1);
-                i--;
                 break;
             }
         }
