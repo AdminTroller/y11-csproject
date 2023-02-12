@@ -4,7 +4,7 @@ var state = "menu"; // Game state. click, menu, playing
 
 var playerX = 512;
 var playerY = 288;
-var playerSpeed = 4.5;
+var playerSpeed = 4;
 var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
 var playerHurtTime = PLAYER_HURT_TIME_BASE;
@@ -49,16 +49,14 @@ const LEVEL1_1 = [
     [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
     [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
     frameRate(60);
-    enemies.push(new Enemy(100, 100, 0));
-    enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(800, 450, 1));
+    enemySpawn();
 }
 
 function preload() { // Load sprites
@@ -90,6 +88,12 @@ function preload() { // Load sprites
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
     OVERWORLD.setVolume(0.5);
+}
+
+function enemySpawn() {
+    enemies.push(new Enemy(100, 100, 0));
+    enemies.push(new Enemy(100, 200, 0));
+    enemies.push(new Enemy(800, 450, 1));
 }
 
 var musicTimer = 0;
@@ -158,10 +162,31 @@ function player() {
 }
 
 function playerMovement() {
-    if (keyIsDown(87) && playerY > 24) playerY -= playerSpeed; // Up
-    if (keyIsDown(83) && playerY < CANVAS_HEIGHT - 24) playerY += playerSpeed; // Down
-    if (keyIsDown(65) && playerX > 24) playerX -= playerSpeed; // Left
-    if (keyIsDown(68) && playerX < CANVAS_WIDTH - 24) playerX += playerSpeed; // Right
+    var okX = okY = true;
+    var dx = dy = 0;
+    if (keyIsDown(87)) dy -= playerSpeed; // Up
+    if (keyIsDown(83)) dy += playerSpeed; // Down
+    if (keyIsDown(65)) dx -= playerSpeed; // Left
+    if (keyIsDown(68)) dx += playerSpeed; // Right
+    var tempX = playerX + dx;
+    var tempY = playerY + dy;
+
+    for (var y = 0; y < LEVEL1_1.length; y++) {
+        for (var x = 0; x < LEVEL1_1[y].length; x++) {
+            if (LEVEL1_1[y][x] > 0) {
+                if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(playerY - (y*32+16)) < 36) {
+                    okX = false;
+                    break;
+                }
+                if (Math.abs(playerX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
+                    okY = false;
+                }
+            }
+        }
+    }
+
+    if (okX) playerX += dx;
+    if (okY) playerY += dy;
 }
 
 function playerShooting() {
