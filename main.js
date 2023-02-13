@@ -362,9 +362,8 @@ class Enemy {
         if (!this.dead) {
             if (this.seePlayer) {
                 this.move();
-                this.shoot();
             }
-            
+            this.shoot();
             this.hurt();
             this.draw();
             this.vision();
@@ -454,7 +453,7 @@ class Enemy {
 
     shoot() {
         if (this.firingCooldown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
-        if (this.firingCooldown >= ENEMY_FIRING_COOLDOWN_BASE[this.type]) {
+        if (this.firingCooldown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
             var bullet = new EnemyBullet(this.x, this.y, this.type);
             enemyBullets.push(bullet);
             this.firingCooldown = Math.random() * 10 - 5;
