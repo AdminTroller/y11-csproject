@@ -8,6 +8,7 @@ var playerSpeed = 4;
 var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
 var playerHurtTime = PLAYER_HURT_TIME_BASE;
+var playerDead = false;
 
 var playerGun = 0;
 var playerBullets = [];
@@ -154,11 +155,13 @@ function uiHearts() {
 }
 
 function player() {
-    playerMovement();
-    playerShooting();
-    reload();
-    playerHurt();
-    playerDraw();
+    if (!playerDead) {
+        playerMovement();
+        playerShooting();
+        reload();
+        playerHurt();
+        playerDraw();
+    }
 }
 
 function playerMovement() {
@@ -263,6 +266,7 @@ function playerHurt() {
 }
 
 function playerDie() {
+    playerDead = true;
     console.log("you died");
 }
 
@@ -360,13 +364,15 @@ class Enemy {
 
     update() {
         if (!this.dead) {
-            if (this.seePlayer) {
-                this.move();
+            if (!playerDead) {
+                if (this.seePlayer) {
+                    this.move();
+                }
+                this.shoot();
+                this.hurt();
+                this.vision();
             }
-            this.shoot();
-            this.hurt();
             this.draw();
-            this.vision();
         }
     }
 
