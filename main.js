@@ -307,6 +307,7 @@ function playerMoveEdge() {
 
 function changeRoom(dir) {
     enemyBullets = [];
+    playerBullets = [];
     room = LEVEL_MAP[level][room][dir];
 }
 
