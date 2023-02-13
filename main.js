@@ -51,9 +51,12 @@ function preload() { // Load sprites
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
     PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
 
+    HEART_BOX = loadImage(PATH + "UI/heart_box.png");
     FULL_HEART = loadImage(PATH + "UI/full_heart.png");
     HALF_HEART = loadImage(PATH + "UI/half_heart.png");
     EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
+
+    ZERO = loadImage(PATH + "UI/0.png");
 
     ENEMY0 = loadImage(PATH + "Enemy/enemy0.png");
     ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
@@ -97,7 +100,7 @@ function draw() { // Loop
     }
 
     imageMode(CORNER);
-    drawImage(BORDER, 0, 0);
+    // drawImage(BORDER, 0, 0);
     imageMode(CENTER);
 }
 
@@ -116,18 +119,26 @@ function drawCrosshair() {
 
 function ui() {
     uiHearts();
+    uiAmmo();
 }
 
 function uiHearts() {
-    drawImage(EMPTY_HEART, 30, 30);
-    drawImage(EMPTY_HEART, 82, 30);
-    drawImage(EMPTY_HEART, 134, 30);
-    if (playerHealth >= 1) drawImage(HALF_HEART, 30, 30);
-    if (playerHealth >= 2) drawImage(FULL_HEART, 30, 30);
-    if (playerHealth >= 3) drawImage(HALF_HEART, 82, 30);
-    if (playerHealth >= 4) drawImage(FULL_HEART, 82, 30);
-    if (playerHealth >= 5) drawImage(HALF_HEART, 134, 30);
-    if (playerHealth >= 6) drawImage(FULL_HEART, 134, 30);
+    drawImage(HEART_BOX, 80, 28);
+    drawImage(EMPTY_HEART, 28, 28);
+    drawImage(EMPTY_HEART, 80, 28);
+    drawImage(EMPTY_HEART, 132, 28);
+    if (playerHealth >= 1) drawImage(HALF_HEART, 28, 28);
+    if (playerHealth >= 2) drawImage(FULL_HEART, 28, 28);
+    if (playerHealth >= 3) drawImage(HALF_HEART, 80, 28);
+    if (playerHealth >= 4) drawImage(FULL_HEART, 80, 28);
+    if (playerHealth >= 5) drawImage(HALF_HEART, 132, 28);
+    if (playerHealth >= 6) drawImage(FULL_HEART, 132, 28);
+}
+
+function uiAmmo() {
+    drawImage(HEART_BOX, 80, 548);
+    drawImage(ZERO, 28, 548);
+    drawImage(ZERO, 80, 548);
 }
 
 function player() {
