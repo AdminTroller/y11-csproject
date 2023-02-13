@@ -93,7 +93,7 @@ function preload() { // Load sprites
 function enemySpawn() {
     enemies.push(new Enemy(100, 100, 0));
     enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(900, 450, 1));
+    enemies.push(new Enemy(900, 200, 1));
 }
 
 var musicTimer = 0;
@@ -478,7 +478,7 @@ class Enemy {
             for (var y = 0; y < LEVEL1_1.length; y++) {
                 for (var x = 0; x < LEVEL1_1[y].length; x++) {
                     if (LEVEL1_1[y][x] > 0) {
-                        if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
+                        if (Math.abs((tempX) - (x*32+16)) < 16 && Math.abs(tempY - (y*32+16)) < 16) {
                             this.seePlayer = false;
                             break;
                         }
