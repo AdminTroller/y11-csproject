@@ -181,7 +181,7 @@ function playerMovement() {
                     okY = false;
                 }
                 if (okX && okY && Math.abs(tempX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
-                    okX = false;
+                    okY = false;
                     break;
                 }
             }
