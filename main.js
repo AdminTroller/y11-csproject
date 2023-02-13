@@ -176,13 +176,10 @@ function playerMovement() {
             if (LEVEL1_1[y][x] > 0) {
                 if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(playerY - (y*32+16)) < 36) {
                     okX = false;
+                    break;
                 }
                 if (Math.abs(playerX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
                     okY = false;
-                }
-                if (okX && okY && Math.abs(tempX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
-                    okY = false;
-                    break;
                 }
             }
         }
