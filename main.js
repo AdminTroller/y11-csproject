@@ -57,6 +57,17 @@ function preload() { // Load sprites
     EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
 
     ZERO = loadImage(PATH + "UI/0.png");
+    ONE = loadImage(PATH + "UI/1.png");
+    TWO = loadImage(PATH + "UI/2.png");
+    THREE = loadImage(PATH + "UI/3.png");
+    FOUR = loadImage(PATH + "UI/4.png");
+    FIVE = loadImage(PATH + "UI/5.png");
+    SIX = loadImage(PATH + "UI/6.png");
+    SEVEN = loadImage(PATH + "UI/7.png");
+    EIGHT = loadImage(PATH + "UI/8.png");
+    NINE = loadImage(PATH + "UI/9.png");
+    SLASH = loadImage(PATH + "UI/slash.png");
+    NUMBERS = [ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,SLASH];
 
     ENEMY0 = loadImage(PATH + "Enemy/enemy0.png");
     ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
@@ -137,8 +148,11 @@ function uiHearts() {
 
 function uiAmmo() {
     drawImage(HEART_BOX, 80, 548);
-    drawImage(ZERO, 28, 548);
-    drawImage(ZERO, 80, 548);
+    drawImage(NUMBERS[1], 12, 548);
+    drawImage(NUMBERS[0], 30, 548);
+    drawImage(NUMBERS[10], 50, 548);
+    drawImage(NUMBERS[1], 66, 548);
+    drawImage(NUMBERS[0], 84, 548);
 }
 
 function player() {
