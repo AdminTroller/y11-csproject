@@ -20,6 +20,9 @@ var playerAmmo = [gunAmmo[0]];
 var gunReload = [40];
 var playerReload = [40];
 
+var level = 0;
+var room = 0;
+
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5];
 const ENEMY_HEALTH = [4, 1];
@@ -52,6 +55,28 @@ const LEVEL1_1 = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
+const LEVEL1_2 = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+const LEVEL1 = [LEVEL1_1, LEVEL1_2];
+const LEVELS = [LEVEL1];
 
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -92,9 +117,13 @@ function preload() { // Load sprites
 }
 
 function enemySpawn() {
-    enemies.push(new Enemy(100, 100, 0));
-    enemies.push(new Enemy(100, 200, 0));
-    enemies.push(new Enemy(900, 200, 1));
+    enemies.push(new Enemy(100, 100, 0, 0, 0));
+    enemies.push(new Enemy(100, 200, 0, 0, 0));
+    enemies.push(new Enemy(900, 200, 1, 0, 0));
+
+    enemies.push(new Enemy(900, 100, 0, 0, 1));
+    enemies.push(new Enemy(900, 200, 0, 0, 1));
+    enemies.push(new Enemy(100, 200, 1, 0, 1));
 }
 
 var musicTimer = 0;
@@ -174,9 +203,9 @@ function playerMovement() {
     var tempX = playerX + dx;
     var tempY = playerY + dy;
 
-    for (var y = 0; y < LEVEL1_1.length; y++) {
-        for (var x = 0; x < LEVEL1_1[y].length; x++) {
-            if (LEVEL1_1[y][x] > 0) {
+    for (var y = 0; y < LEVELS[level][room].length; y++) {
+        for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+            if (LEVELS[level][room][y][x] > 0) {
                 if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(playerY - (y*32+16)) < 36) {
                     okX = false;
                     break;
@@ -207,9 +236,9 @@ function playerShooting() {
         var bullet = playerBullets[i];
         bullet.update();
 
-        for (var y = 0; y < LEVEL1_1.length; y++) {
-            for (var x = 0; x < LEVEL1_1[y].length; x++) {
-                if (LEVEL1_1[y][x] > 0) {
+        for (var y = 0; y < LEVELS[level][room].length; y++) {
+            for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+                if (LEVELS[level][room][y][x] > 0) {
                     if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
                         playerBullets.splice(i, 1); // Remove bullet
                         break;
@@ -280,9 +309,9 @@ function enemy() {
         var bullet = enemyBullets[i];
         bullet.update();
 
-        for (var y = 0; y < LEVEL1_1.length; y++) {
-            for (var x = 0; x < LEVEL1_1[y].length; x++) {
-                if (LEVEL1_1[y][x] > 0) {
+        for (var y = 0; y < LEVELS[level][room].length; y++) {
+            for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+                if (LEVELS[level][room][y][x] > 0) {
                     if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
                         enemyBullets.splice(i, 1); // Remove bullet
                         break;
@@ -304,9 +333,9 @@ function enemy() {
 }
 
 function tiles() {
-    for(var y = 0; y < LEVEL1_1.length; y++) {
-        for (var x = 0; x < LEVEL1_1[y].length; x++) {
-            if (LEVEL1_1[y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
+    for(var y = 0; y < LEVELS[level][room].length; y++) {
+        for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+            if (LEVELS[level][room][y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
         }
     }
 }
@@ -349,11 +378,13 @@ class PlayerBullet {
 }
 
 class Enemy {
-    constructor(x, y, type) {
+    constructor(x, y, type, level, room) {
         this.id = enemies.length;
         this.x = x;
         this.y = y;
         this.type = type;
+        this.level = level;
+        this.room = room;
         this.health = ENEMY_HEALTH[this.type];
         this.dead = false;
         this.seePlayer = false;
@@ -363,16 +394,16 @@ class Enemy {
     }
 
     update() {
-        if (!this.dead) {
-            if (!playerDead) {
-                if (this.seePlayer) {
-                    this.move();
+        if (this.level == level && this.room == room) {
+            if (!this.dead) {
+                if (!playerDead) {
+                    if (this.seePlayer) this.move();
+                    this.shoot();
+                    this.hurt();
+                    this.vision();
                 }
-                this.shoot();
-                this.hurt();
-                this.vision();
+                this.draw();
             }
-            this.draw();
         }
     }
 
@@ -391,9 +422,9 @@ class Enemy {
         var tempX = this.x + dx;
         var tempY = this.y + dy;
 
-        for (var y = 0; y < LEVEL1_1.length; y++) {
-            for (var x = 0; x < LEVEL1_1[y].length; x++) {
-                if (LEVEL1_1[y][x] > 0) {
+        for (var y = 0; y < LEVELS[level][room].length; y++) {
+            for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+                if (LEVELS[level][room][y][x] > 0) {
                     if (Math.abs(tempX - (x*32+16)) < 26 && Math.abs(this.y - (y*32+16)) < 36) {
                         okX = false;
                         break;
@@ -408,23 +439,27 @@ class Enemy {
         if (!okX) dx = 0;
         if (!okY) dy = 0;
 
+        var tempX = this.x + dx*5;
+        var tempY = this.y + dy*5;
+        if (Math.abs(playerX - tempX) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type] && Math.abs(playerY - tempY) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type]) { // Check collision with player
+            dx = 0;
+            dy = 0;
+        }
 
         for (var i = 0; i < enemies.length; i++) { // Check collision
-            var enemy = enemies[i];
-            var tempX = this.x + dx*5;
-            var tempY = this.y + dy*5;
-            if (Math.abs(playerX - tempX) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type] && Math.abs(playerY - tempY) < ENEMY_SPREAD_PLAYER_DISTANCE[this.type]) { // Check collision with player
-                dx = 0;
-                dy = 0;
-                break;
-            }
-            if (i != this.id && !enemy.dead) { // Check collision with other enemies
-                if (Math.abs(enemy.x - tempX) < ENEMY_SPREAD_DISTANCE[this.type] && Math.abs(enemy.y - tempY) < ENEMY_SPREAD_DISTANCE[this.type]) {
-                    dx = 0;
-                    dy = 0;
-                    break;
+            if (enemies[i].level == this.level && enemies[i].room == this.room) {
+                var enemy = enemies[i];
+                var tempX = this.x + dx*5;
+                var tempY = this.y + dy*5;
+                if (i != this.id && !enemy.dead) { // Check collision with other enemies
+                    if (Math.abs(enemy.x - tempX) < ENEMY_SPREAD_DISTANCE[this.type] && Math.abs(enemy.y - tempY) < ENEMY_SPREAD_DISTANCE[this.type]) {
+                        dx = 0;
+                        dy = 0;
+                        break;
+                    }
                 }
             }
+            
         }
         if (this.hurtTime >= ENEMY_HURT_TIME_BASE[this.type]) {
             this.x += dx;
@@ -480,9 +515,9 @@ class Enemy {
         var tempY = this.y
         
         while (Math.abs(tempX - playerX) > 40 || Math.abs(tempY - playerY) > 40) {
-            for (var y = 0; y < LEVEL1_1.length; y++) {
-                for (var x = 0; x < LEVEL1_1[y].length; x++) {
-                    if (LEVEL1_1[y][x] > 0) {
+            for (var y = 0; y < LEVELS[level][room].length; y++) {
+                for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+                    if (LEVELS[level][room][y][x] > 0) {
                         if (Math.abs((tempX) - (x*32+16)) < 16 && Math.abs(tempY - (y*32+16)) < 16) {
                             this.seePlayer = false;
                             break;
