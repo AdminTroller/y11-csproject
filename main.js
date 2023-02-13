@@ -194,19 +194,24 @@ function playerShooting() {
         var bullet = playerBullets[i];
         bullet.update();
 
+        var temp = true;
         for (var y = 0; y < LEVELS[level][room].length; y++) {
             for (var x = 0; x < LEVELS[level][room][y].length; x++) {
                 if (LEVELS[level][room][y][x] > 0) {
                     if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
                         playerBullets.splice(i, 1); // Remove bullet
+                        i--;
+                        var temp = false;
                         break;
                     }
                 }
             }
+            if (!temp) break;
         }
 
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
             playerBullets.splice(i, 1); // Remove bullet
+            i--;
         } 
     }
 }
@@ -285,9 +290,7 @@ function playerMoveEdge() {
 
 function changeRoom(dir) {
     enemyBullets = [];
-    console.log(LEVEL_MAP[level][room][dir]);
-    room = 1;
-    // room = LEVEL_MAP[level][room][dir];
+    room = LEVEL_MAP[level][room][dir];
 }
 
 function enemy() {
@@ -295,15 +298,19 @@ function enemy() {
         var bullet = enemyBullets[i];
         bullet.update();
 
+        var temp = true;
         for (var y = 0; y < LEVELS[level][room].length; y++) {
             for (var x = 0; x < LEVELS[level][room][y].length; x++) {
                 if (LEVELS[level][room][y][x] > 0) {
                     if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
                         enemyBullets.splice(i, 1); // Remove bullet
+                        i--;
+                        var temp = false;
                         break;
                     }
                 }
             }
+            if (!temp) break;
         }
 
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
@@ -601,11 +608,11 @@ const LEVEL1 = [LEVEL1_1, LEVEL1_2];
 const LEVELS = [LEVEL1];
 
 const LEVEL1_MAP = [ // [up, down, left, right]
-    [1, 1, 1, 1] // Room 0
+    [1, 1, 1, 1], // Room 0
     [0, 0, 0, 0] // Room 1 etc.
 ];
 const LEVEL2_MAP = [
-    [1, 1, 1, 1] // Room 0
+    [1, 1, 1, 1], // Room 0
     [0, 0, 0, 0] // Room 1 etc.
 ];
 const LEVEL_MAP = [LEVEL1_MAP, LEVEL2_MAP];
