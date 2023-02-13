@@ -266,25 +266,28 @@ function playerDraw() {
 
 function playerMoveEdge() {
     if (playerY < 8) {
-        changeRoom("up");
+        changeRoom(0);
         playerY = CANVAS_HEIGHT - 12;
     }
     if (playerY > CANVAS_HEIGHT - 8) {
-        changeRoom("down");
+        changeRoom(1);
         playerY = 12;
     }
     if (playerX < 8) {
-        changeRoom("left");
+        changeRoom(2);
         playerX = CANVAS_WIDTH - 12;
     }
     if (playerX > CANVAS_WIDTH - 8) {
-        changeRoom("right");
+        changeRoom(3);
         playerX = 12;
     }
 }
 
 function changeRoom(dir) {
     enemyBullets = [];
+    console.log(LEVEL_MAP[level][room][dir]);
+    room = 1;
+    // room = LEVEL_MAP[level][room][dir];
 }
 
 function enemy() {
@@ -596,6 +599,16 @@ const LEVEL1_2 = [
 ];
 const LEVEL1 = [LEVEL1_1, LEVEL1_2];
 const LEVELS = [LEVEL1];
+
+const LEVEL1_MAP = [ // [up, down, left, right]
+    [1, 1, 1, 1] // Room 0
+    [0, 0, 0, 0] // Room 1 etc.
+];
+const LEVEL2_MAP = [
+    [1, 1, 1, 1] // Room 0
+    [0, 0, 0, 0] // Room 1 etc.
+];
+const LEVEL_MAP = [LEVEL1_MAP, LEVEL2_MAP];
 
 const LEVEL_TEMPLATE = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
