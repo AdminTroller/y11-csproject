@@ -66,6 +66,7 @@ function preload() { // Load sprites
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
 
+    TILE0 = loadImage(PATH + "Tiles/tile0.png");
     TILE1 = loadImage(PATH + "Tiles/tile1.png");
     
     PATH = "Audio/";
@@ -78,7 +79,6 @@ var musicTimer = 0;
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-    background(240, 240, 240);
 
     if (state != "click") {
         debug();
@@ -318,6 +318,7 @@ function enemy() {
 function tiles() {
     for(var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
+            if (LEVELS[level][room][y][x] == 0) drawImage(TILE0, x*32+16, y*32+16);
             if (LEVELS[level][room][y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
         }
     }
