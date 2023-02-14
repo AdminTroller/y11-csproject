@@ -79,6 +79,7 @@ function preload() { // Load sprites
     ENEMY1_HURT = loadImage(PATH + "Enemy/enemy1.png");
     ENEMY_SPRITES = [ENEMY0, ENEMY1];
     ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
+    C4 = loadImage(PATH + "Enemy/3/c4.png");
 
     ENEMY0_BULLET = loadImage(PATH + "Enemy/bullet0.png");
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
