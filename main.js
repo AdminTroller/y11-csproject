@@ -57,7 +57,9 @@ function preload() { // Load sprites
     EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
 
     AMMO_BOX = loadImage(PATH + "UI/ammo_box.png");
+    RELOAD_BOX = loadImage(PATH + "UI/reload_box.png");
     AMMO_SYMBOL = loadImage(PATH + "UI/ammo_symbol.png");
+    AMMO_SYMBOL_EMPTY = loadImage(PATH + "UI/ammo_symbol_empty.png");
     ZERO = loadImage(PATH + "UI/0.png");
     ONE = loadImage(PATH + "UI/1.png");
     TWO = loadImage(PATH + "UI/2.png");
@@ -149,13 +151,21 @@ function uiHearts() {
 }
 
 function uiAmmo() {
-    drawImage(AMMO_BOX, 80, 548);
+    drawImage(AMMO_BOX, 70, 548);
     drawImage(NUMBERS[Math.floor(playerAmmo/10)], 14, 548);
     drawImage(NUMBERS[playerAmmo % 10], 32, 548);
     drawImage(NUMBERS[10], 50, 548);
     drawImage(NUMBERS[Math.floor(gunAmmo[playerGun]/10)], 66, 548);
     drawImage(NUMBERS[gunAmmo[playerGun] % 10], 84, 548);
-    drawImage(AMMO_SYMBOL, 118, 548);
+    if (playerAmmo[playerGun] > 0) drawImage(AMMO_SYMBOL, 118, 548);
+    else {
+        drawImage(AMMO_SYMBOL_EMPTY, 118, 548);
+        drawImage(AMMO_SYMBOL_EMPTY, playerX, playerY - 48);
+    }
+
+    if (playerReload[playerGun] < gunReload[playerGun]) {
+        drawImageSmooth(RELOAD_BOX, 70 - (playerReload[playerGun] * (140/gunReload[playerGun])), 548);
+    }
 }
 
 function player() {
@@ -237,7 +247,6 @@ function playerShooting() {
 function reload() {
     if (playerReload[playerGun] < gunReload[playerGun]) playerReload[playerGun]++;
     if (playerReload[playerGun] == gunReload[playerGun] - 1) playerAmmo[playerGun] = gunAmmo[playerGun];
-    // if (playerReload[playerGun] < gunReload[playerGun]) text("Reloading...", 10, 530);
 
     if (keyIsDown(82)) { // R is pressed
         if (playerReload[playerGun] >= gunReload[playerGun] && playerAmmo[playerGun] < gunAmmo[playerGun]) {
