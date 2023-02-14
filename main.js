@@ -136,16 +136,16 @@ function ui() {
 }
 
 function uiHearts() {
-    drawImage(HEART_BOX, 80, 28);
-    drawImage(EMPTY_HEART, 28, 28);
-    drawImage(EMPTY_HEART, 80, 28);
-    drawImage(EMPTY_HEART, 132, 28);
-    if (playerHealth >= 1) drawImage(HALF_HEART, 28, 28);
-    if (playerHealth >= 2) drawImage(FULL_HEART, 28, 28);
-    if (playerHealth >= 3) drawImage(HALF_HEART, 80, 28);
-    if (playerHealth >= 4) drawImage(FULL_HEART, 80, 28);
-    if (playerHealth >= 5) drawImage(HALF_HEART, 132, 28);
-    if (playerHealth >= 6) drawImage(FULL_HEART, 132, 28);
+    drawImage(HEART_BOX, 82, 28);
+    drawImage(EMPTY_HEART, 30, 28);
+    drawImage(EMPTY_HEART, 82, 28);
+    drawImage(EMPTY_HEART, 134, 28);
+    if (playerHealth >= 1) drawImage(HALF_HEART, 30, 28);
+    if (playerHealth >= 2) drawImage(FULL_HEART, 30, 28);
+    if (playerHealth >= 3) drawImage(HALF_HEART, 82, 28);
+    if (playerHealth >= 4) drawImage(FULL_HEART, 82, 28);
+    if (playerHealth >= 5) drawImage(HALF_HEART, 134, 28);
+    if (playerHealth >= 6) drawImage(FULL_HEART, 134, 28);
 }
 
 function uiAmmo() {
