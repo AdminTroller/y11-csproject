@@ -211,7 +211,7 @@ function playerMovement() {
     for (var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] > 0) {
-                if (!level_clear[level][room]) {
+                if (!level_clear[level][room] && playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18)) {
                     if (tempX < (64+12) || tempX > CANVAS_WIDTH - (64+12)) okX = false;
                     if (tempY < (64+18) || tempY > CANVAS_HEIGHT - (64+18)) okY = false;
                 }
@@ -397,17 +397,39 @@ function enemy() {
         var enemy = enemies[i];
         enemy.update();
     }
+
+    for (var l = 0; l < 1; l++) { // Check room clear
+        for (var r = 0; r < 2; r++) {
+            var roomCleared = true;
+            for (var i = 0; i < enemies.length; i++) {
+                var enemy = enemies[i];
+                if (enemy.level == l && enemy.room == r && !enemy.dead) {
+                    roomCleared == false
+                    break;
+                }
+            }
+            if (roomCleared) level_clear[l][r] = true;
+        }
+    }
 }
 
 function tiles() {
-    for(var y = 0; y < LEVELS[level][room].length; y++) {
+    for(var y = 0; y < LEVELS[level][room].length; y++) { //Background tiles
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] == 0) drawImage(TILE0, x*32+16, y*32+16);
+        }
+    }
+
+    if (level_clear[level][room] == false && playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18)) {
+        drawImage(BARRIER_HORIZONTAL, 512, 32);
+        drawImage(BARRIER_HORIZONTAL, 512, 544);
+        drawImage(BARRIER_VERTICAL, 32, 288);
+        drawImage(BARRIER_VERTICAL, 992, 288);
+    }
+
+    for(var y = 0; y < LEVELS[level][room].length; y++) { //Foreground tiles
+        for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
-            // drawImage(BARRIER_HORIZONTAL, 512, 32);
-            // drawImage(BARRIER_HORIZONTAL, 512, 544);
-            // drawImage(BARRIER_VERTICAL, 32, 288);
-            // drawImage(BARRIER_VERTICAL, 992, 288);
         }
     }
 }
@@ -655,7 +677,7 @@ function enemySpawn() {
     // enemies.push(new Enemy(100, 100, 1, 0, 1));
 }
 
-var level1_clear = [true, true];
+var level1_clear = [true, false];
 var level_clear = [level1_clear];
 
 const LEVEL1_1 = [
