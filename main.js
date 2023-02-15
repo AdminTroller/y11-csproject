@@ -1,6 +1,11 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "menu"; // Game state. click, menu, playing
+var state = "playing"; // Game state. click, menu, playing
+
+var inFade = false;
+var fadeTimer = 0;
+var fadeOpacity = 0;
+var fadeOut = false;
 
 var playerX = 512;
 var playerY = 400;
@@ -9,6 +14,10 @@ var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
 var playerHurtTime = PLAYER_HURT_TIME_BASE;
 var playerDead = false;
+var changeRoomDir;
+
+var allowChangeRoomFade = false;
+var changeRoomFadeTimer = 0;
 
 var playerGun = 0;
 var playerBullets = [];
@@ -106,12 +115,12 @@ function draw() { // Loop
         enemy();
         player();
         ui();
+        fade();
 
         musicTimer += 1;
         if (musicTimer == 60) {
             OVERWORLD.loop();
         }
-        drawCrosshair();
         noCursor();
     }
 
@@ -136,6 +145,7 @@ function drawCrosshair() {
 function ui() {
     uiHearts();
     uiAmmo();
+    drawCrosshair();
 }
 
 function uiHearts() {
@@ -169,14 +179,20 @@ function uiAmmo() {
     }
 }
 
+function fade() {
+    if (allowChangeRoomFade) changeRoomFade();
+}
+
 function player() {
     if (!playerDead) {
-        playerMovement();
-        playerShooting();
-        reload();
-        playerHurt();
+        if (!inFade) {
+            playerMovement();
+            playerShooting();
+            reload();
+            playerHurt();
+            playerMoveEdge();
+        }
         playerDraw();
-        playerMoveEdge();
     }
 }
 
@@ -298,27 +314,50 @@ function playerDraw() {
 
 function playerMoveEdge() {
     if (playerY < 8) {
-        changeRoom(0);
-        playerY = CANVAS_HEIGHT - 12;
+        changeRoomDir = 0;
+        changeRoom(changeRoomDir);
     }
     if (playerY > CANVAS_HEIGHT - 8) {
-        changeRoom(1);
-        playerY = 12;
+        changeRoomDir = 1;
+        changeRoom(changeRoomDir);
     }
     if (playerX < 8) {
-        changeRoom(2);
-        playerX = CANVAS_WIDTH - 12;
+        changeRoomDir = 2;
+        changeRoom(changeRoomDir);
     }
     if (playerX > CANVAS_WIDTH - 8) {
-        changeRoom(3);
-        playerX = 12;
+        changeRoomDir = 3;
+        changeRoom(changeRoomDir);
     }
 }
 
 function changeRoom(dir) {
-    enemyBullets = [];
-    playerBullets = [];
-    room = LEVEL_MAP[level][room][dir];
+    inFade = true;
+    allowChangeRoomFade = true;
+    changeRoomDir = dir;
+}
+
+function changeRoomFade() {
+    if (fadeOut) fadeOpacity -= 20;
+    else fadeOpacity += 20;
+    background(0, 0, 0, fadeOpacity);
+    if (fadeOpacity >= 255) {
+        fadeOut = true;
+        enemyBullets = [];
+        playerBullets = [];
+        room = LEVEL_MAP[level][room][changeRoomDir];
+
+        if (changeRoomDir == 0) playerY = CANVAS_HEIGHT - 12;
+        if (changeRoomDir == 1) playerY = 12;
+        if (changeRoomDir == 2) playerX = CANVAS_WIDTH - 12;
+        if (changeRoomDir == 3) playerX = 12;
+    }
+    if (fadeOpacity < 0) {
+        fadeOut = false;
+        inFade = false;
+        allowChangeRoomFade = false;
+        fadeOpacity = 0;
+    }
 }
 
 function enemy() {
@@ -418,7 +457,7 @@ class Enemy {
     update() {
         if (this.level == level && this.room == room) {
             if (!this.dead) {
-                if (!playerDead) {
+                if (!playerDead && !inFade) {
                     if (this.seePlayer) this.move();
                     this.shoot();
                     this.hurt();
@@ -498,7 +537,7 @@ class Enemy {
         this.playerBullets = playerBullets;
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
             this.hurtTime++; 
-            this.firingCooldown = 0;
+            // this.firingCooldown = 0; //uncomment this if you want enemies to not show when getting hurt
         }
 
         for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
@@ -574,7 +613,9 @@ class EnemyBullet {
     }
 
     update() {
-        this.move();
+        if (!inFade) {
+            this.move();
+        }
         this.draw();
     }
 
