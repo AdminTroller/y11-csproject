@@ -94,6 +94,8 @@ function preload() { // Load sprites
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
 
+    BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
+    BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
     TILE0 = loadImage(PATH + "Tiles/tile0.png");
     TILE1 = loadImage(PATH + "Tiles/tile1.png");
     
@@ -209,6 +211,10 @@ function playerMovement() {
     for (var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] > 0) {
+                if (!level_clear[level][room]) {
+                    if (tempX < (64+12) || tempX > CANVAS_WIDTH - (64+12)) okX = false;
+                    if (tempY < (64+18) || tempY > CANVAS_HEIGHT - (64+18)) okY = false;
+                }
                 if (Math.abs(tempX - (x*32+16)) < 28 && Math.abs(playerY - (y*32+16)) < 36) {
                     okX = false;
                     break;
@@ -398,6 +404,10 @@ function tiles() {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] == 0) drawImage(TILE0, x*32+16, y*32+16);
             if (LEVELS[level][room][y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
+            // drawImage(BARRIER_HORIZONTAL, 512, 32);
+            // drawImage(BARRIER_HORIZONTAL, 512, 544);
+            // drawImage(BARRIER_VERTICAL, 32, 288);
+            // drawImage(BARRIER_VERTICAL, 992, 288);
         }
     }
 }
@@ -644,6 +654,9 @@ function enemySpawn() {
     enemies.push(new Enemy(100, 288, 0, 0, 1));
     // enemies.push(new Enemy(100, 100, 1, 0, 1));
 }
+
+var level1_clear = [true, true];
+var level_clear = [level1_clear];
 
 const LEVEL1_1 = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
