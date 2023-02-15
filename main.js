@@ -14,6 +14,7 @@ var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
 var playerHurtTime = PLAYER_HURT_TIME_BASE;
 var playerDead = false;
+var playerInCombat = true;
 var changeRoomDir;
 
 var allowChangeRoomFade = false;
@@ -208,10 +209,13 @@ function playerMovement() {
     var tempX = playerX + dx;
     var tempY = playerY + dy;
 
+    if (level_clear[level][room] || (playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18))) playerInCombat = true;
+    else playerInCombat = false;
+
     for (var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] > 0) {
-                if (!level_clear[level][room] && playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18)) {
+                if (!level_clear[level][room] && playerInCombat) {
                     if (tempX < (64+12) || tempX > CANVAS_WIDTH - (64+12)) okX = false;
                     if (tempY < (64+18) || tempY > CANVAS_HEIGHT - (64+18)) okY = false;
                 }
@@ -232,7 +236,7 @@ function playerMovement() {
 
 function playerShooting() {
     if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
-    if (mouseIsPressed) {
+    if (mouseIsPressed && playerInCombat) {
         if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
             var bullet = new PlayerBullet();
             playerBullets.push(bullet);
@@ -342,6 +346,7 @@ function changeRoom(dir) {
     inFade = true;
     allowChangeRoomFade = true;
     changeRoomDir = dir;
+    playerInCombat = false;
 }
 
 function changeRoomFade() {
@@ -398,13 +403,13 @@ function enemy() {
         enemy.update();
     }
 
-    for (var l = 0; l < 1; l++) { // Check room clear
-        for (var r = 0; r < 2; r++) {
+    for (var l = 0; l < level_clear.length; l++) { // Check room clear
+        for (var r = 0; r < level_clear[l].length; r++) {
             var roomCleared = true;
             for (var i = 0; i < enemies.length; i++) {
                 var enemy = enemies[i];
                 if (enemy.level == l && enemy.room == r && !enemy.dead) {
-                    roomCleared == false
+                    roomCleared = false;
                     break;
                 }
             }
@@ -420,7 +425,7 @@ function tiles() {
         }
     }
 
-    if (level_clear[level][room] == false && playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18)) {
+    if (level_clear[level][room] == false && playerInCombat) {
         drawImage(BARRIER_HORIZONTAL, 512, 32);
         drawImage(BARRIER_HORIZONTAL, 512, 544);
         drawImage(BARRIER_VERTICAL, 32, 288);
