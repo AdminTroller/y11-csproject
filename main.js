@@ -209,11 +209,11 @@ function playerMovement() {
     for (var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] > 0) {
-                if (Math.abs(tempX - (x*32+16)) < 36 && Math.abs(playerY - (y*32+16)) < 36) {
+                if (Math.abs(tempX - (x*32+16)) < 28 && Math.abs(playerY - (y*32+16)) < 36) {
                     okX = false;
                     break;
                 }
-                if (Math.abs(playerX - (x*32+16)) < 36 && Math.abs(tempY - (y*32+16)) < 36) {
+                if (Math.abs(playerX - (x*32+16)) < 28 && Math.abs(tempY - (y*32+16)) < 36) {
                     okY = false;
                 }
             }
@@ -276,7 +276,7 @@ function playerHurt() {
     if (playerHurtTime < PLAYER_HURT_TIME_BASE) playerHurtTime++; // During hurt
     for (var i = 0; i < enemyBullets.length; i++) { // Check bullet collision
         var bullet = enemyBullets[i];
-        if (Math.abs(bullet.x - playerX) <= 30 && Math.abs(bullet.y - playerY) <= 30) {
+        if (Math.abs(bullet.x - playerX) <= 20 && Math.abs(bullet.y - playerY) <= 28) {
             if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
                 playerHealth -= 1;
                 playerHurtTime = 0;
@@ -290,11 +290,12 @@ function playerHurt() {
     for (var i = 0; i < enemies.length; i++) { // Check enemy collision
         var enemy = enemies[i];
         if (enemy.level == level && enemy.room == room) {
-            if (Math.abs(enemy.x - playerX) <= 30 && Math.abs(enemy.y - playerY) <= 48 && !enemy.dead) {
+            if (Math.abs(enemy.x - playerX) <= 28 && Math.abs(enemy.y - playerY) <= 44 && !enemy.dead) {
                 if (enemy.type == 1) enemy.die();
                 if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
                     playerHealth -= 1;
                     playerHurtTime = 0;
+                    if (playerHealth <= 0) playerDie();
                     break;
                 }
             }
@@ -542,7 +543,7 @@ class Enemy {
 
         for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
             var bullet = playerBullets[i];
-            if (Math.abs(bullet.x - this.x) <= 30 && Math.abs(bullet.y - this.y) <= 30) {
+            if (Math.abs(bullet.x - this.x) <= 20 && Math.abs(bullet.y - this.y) <= 24) {
                 this.health -= 1;
                 this.hurtTime = 0;
                 playerBullets.splice(i, 1);
