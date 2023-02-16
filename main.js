@@ -14,7 +14,7 @@ var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
 var playerHurtTime = PLAYER_HURT_TIME_BASE;
 var playerDead = false;
-var playerInCombat = true;
+var playerInRoom = true;
 var changeRoomDir;
 
 var allowChangeRoomFade = false;
@@ -209,13 +209,13 @@ function playerMovement() {
     var tempX = playerX + dx;
     var tempY = playerY + dy;
 
-    if (level_clear[level][room] || (playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18))) playerInCombat = true;
-    else playerInCombat = false;
+    if (playerX >= (64+12) && playerX <= CANVAS_WIDTH - (64+12) && playerY >= (64+18) && playerY <= CANVAS_HEIGHT - (64+18)) playerInRoom = true;
+    else playerInRoom = false;
 
     for (var y = 0; y < LEVELS[level][room].length; y++) {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] > 0) {
-                if (!level_clear[level][room] && playerInCombat) {
+                if (!level_clear[level][room] && playerInRoom) {
                     if (tempX < (64+12) || tempX > CANVAS_WIDTH - (64+12)) okX = false;
                     if (tempY < (64+18) || tempY > CANVAS_HEIGHT - (64+18)) okY = false;
                 }
@@ -236,7 +236,7 @@ function playerMovement() {
 
 function playerShooting() {
     if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
-    if (mouseIsPressed && playerInCombat) {
+    if (mouseIsPressed && (playerInRoom || level_clear[level][room])) {
         if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
             var bullet = new PlayerBullet();
             playerBullets.push(bullet);
@@ -267,7 +267,11 @@ function playerShooting() {
         if (bullet.x < -50 || bullet.x > CANVAS_WIDTH + 50 || bullet.y < -50 || bullet.y > CANVAS_HEIGHT + 50) {
             playerBullets.splice(i, 1); // Remove bullet
             i--;
-        } 
+        }
+        if (temp && playerInRoom && !level_clear[level][room] && (bullet.y <= 72 || bullet.y >= CANVAS_HEIGHT - 72 || bullet.x <= 72 || bullet.x >= CANVAS_WIDTH - 72)) {
+            playerBullets.splice(i, 1); // Remove bullet
+            i--;
+        }
     }
 }
 
@@ -346,7 +350,7 @@ function changeRoom(dir) {
     inFade = true;
     allowChangeRoomFade = true;
     changeRoomDir = dir;
-    playerInCombat = false;
+    playerInRoom = false;
 }
 
 function changeRoomFade() {
@@ -396,6 +400,10 @@ function enemy() {
             enemyBullets.splice(i, 1); // Remove bullet
             i--;
         }
+        if (temp && playerInRoom && !level_clear[level][room] && (bullet.y <= 72 || bullet.y >= CANVAS_HEIGHT - 72 || bullet.x <= 72 || bullet.x >= CANVAS_WIDTH - 72)) {
+            enemyBullets.splice(i, 1); // Remove bullet
+            i--;
+        }
     }
 
     for (var i = 0; i < enemies.length; i++) { // Enemies
@@ -425,7 +433,7 @@ function tiles() {
         }
     }
 
-    if (level_clear[level][room] == false && playerInCombat) {
+    if (level_clear[level][room] == false && playerInRoom) {
         drawImage(BARRIER_HORIZONTAL, 512, 32);
         drawImage(BARRIER_HORIZONTAL, 512, 544);
         drawImage(BARRIER_VERTICAL, 32, 288);
@@ -682,7 +690,7 @@ function enemySpawn() {
     // enemies.push(new Enemy(100, 100, 1, 0, 1));
 }
 
-var level1_clear = [true, false];
+var level1_clear = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 var level_clear = [level1_clear];
 
 const LEVEL1_1 = [
