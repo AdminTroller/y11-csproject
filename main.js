@@ -34,7 +34,7 @@ var level = 0;
 var room = 0;
 
 var enemies = [];
-const ENEMY_SPEED = [1.5, 3];
+const ENEMY_SPEED = [1.5, 4];
 const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0];
@@ -127,9 +127,9 @@ function draw() { // Loop
         noCursor();
     }
 
-    imageMode(CORNER);
+    // imageMode(CORNER);
     // drawImage(BORDER, 0, 0);
-    imageMode(CENTER);
+    // imageMode(CENTER);
 }
 
 function drawImage(sprite, x, y) {
@@ -409,6 +409,10 @@ function enemy() {
     for (var i = 0; i < enemies.length; i++) { // Enemies
         var enemy = enemies[i];
         enemy.update();
+
+        if (keyIsDown(71)) { // Debug kill enemy
+            if (enemy.level == level && enemy.room == room) enemy.dead = true;
+        }
     }
 
     for (var l = 0; l < level_clear.length; l++) { // Check room clear
@@ -684,8 +688,8 @@ function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(400, 160, 0, 0, 1));
     enemies.push(new Enemy(640, 160, 0, 0, 1));
 
-    enemies.push(new Enemy(100, 100, 0, 0, 2));
-    enemies.push(new Enemy(200, 100, 0, 0, 2));
+    enemies.push(new Enemy(144, 150, 0, 0, 2));
+    enemies.push(new Enemy(144, 426, 0, 0, 2));
     enemies.push(new Enemy(300, 100, 1, 0, 2));
 }
 
