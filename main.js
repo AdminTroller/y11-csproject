@@ -85,10 +85,10 @@ function preload() { // Load sprites
     SLASH = loadImage(PATH + "UI/slash.png");
     NUMBERS = [ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,SLASH];
 
-    ENEMY0 = loadImage(PATH + "Enemy/enemy0.png");
-    ENEMY0_HURT = loadImage(PATH + "Enemy/enemy0_hurt.png");
-    ENEMY1 = loadImage(PATH + "Enemy/enemy1.png");
-    ENEMY1_HURT = loadImage(PATH + "Enemy/enemy1.png");
+    ENEMY0 = loadImage(PATH + "Enemy/1/enemy0.png");
+    ENEMY0_HURT = loadImage(PATH + "Enemy/1/enemy0_hurt.png");
+    ENEMY1 = loadImage(PATH + "Enemy/1/enemy1.png");
+    ENEMY1_HURT = loadImage(PATH + "Enemy/1/enemy1.png");
     ENEMY_SPRITES = [ENEMY0, ENEMY1];
     ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
     C4 = loadImage(PATH + "Enemy/3/c4.png");
@@ -99,8 +99,8 @@ function preload() { // Load sprites
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
-    TILE0 = loadImage(PATH + "Tiles/tile0.png");
-    TILE1 = loadImage(PATH + "Tiles/tile1.png");
+    TILE0 = loadImage(PATH + "Tiles/1/tile0.png");
+    TILE1 = loadImage(PATH + "Tiles/1/tile1.png");
 
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BACKGROUND = loadImage(PATH + "Background/menu_background.png");
