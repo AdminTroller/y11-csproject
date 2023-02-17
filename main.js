@@ -45,6 +45,8 @@ const ENEMY_BULLET_SPEED = [5, 10];
 const ENEMY_FIRING_COOLDOWN_BASE = [60];
 var enemyFiringCooldown = 0;
 
+var menuState = "main";
+
 function setup() { // Inital setup
     resizeCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     noSmooth();
@@ -99,10 +101,17 @@ function preload() { // Load sprites
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
     TILE0 = loadImage(PATH + "Tiles/tile0.png");
     TILE1 = loadImage(PATH + "Tiles/tile1.png");
+
+    MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
+    MENU_BACKGROUND = loadImage(PATH + "Background/menu_background.png");
     
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
     OVERWORLD.setVolume(0.5);
+
+    FONT_MONO = loadFont('Fonts/font_mono.ttf');
+    FONT_SANS = loadFont('Fonts/font_sans.ttf');
+    FONT_SANS_BOLD = loadFont('Fonts/font_sans_bold.ttf');
 }
 
 var musicTimer = 0;
@@ -110,38 +119,78 @@ var musicTimer = 0;
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-
-    if (state != "click") {
-        debug();
+    debug();
     
+    if (state == "menu") {
+        cursor();
+        drawImage(MENU_BACKGROUND, 512, 288);
+        textAlign(CENTER, CENTER);
+
+        if (menuState == "main") {
+            drawImage(MENU_BUTTON, 512, 248);
+            drawImage(MENU_BUTTON, 512, 344);
+
+            textFont(FONT_SANS_BOLD);
+            fill(0, 0, 0);
+            textSize(48);
+            text('Shooty Game', 512, 32);
+
+            fill(69, 69, 69);
+            textSize(24);
+            text('Y11 CS Project', 512, 80);
+
+            textFont(FONT_SANS);
+            fill(0, 160, 0);
+            textSize(40);
+            text('Play', 512, 240);
+
+            fill(200, 150, 0);
+            text('Options', 512, 336);
+
+            fill(128, 128, 0);
+            textSize(24);
+            text('Credits', 512, 450);
+
+            fill(64, 64, 64);
+            textSize(16);
+            text('Programming - AdminTroller', 512, 500);
+            text('Music - AdminTroller', 512, 480);
+            text('Sprites - mi_gusta', 512, 520);
+            text('Playtesting - no one yet', 512, 540);
+
+        }
+
+        drawImage(BORDER, 512, 288);
+    }
+
+    if (state == "playing") {
+        noCursor();
         tiles();
         enemy();
         player();
         ui();
         fade();
-
-        musicTimer += 1;
-        if (musicTimer == 60) {
-            OVERWORLD.loop();
-        }
-        noCursor();
+    }
+    
+    musicTimer += 1;
+    if (musicTimer == 60) {
+        OVERWORLD.loop();
     }
 
-    // imageMode(CORNER);
-    // drawImage(BORDER, 0, 0);
-    // imageMode(CENTER);
+    // drawImage(BORDER, 512, 288);
 }
 
 function drawImage(sprite, x, y) {
+    imageMode(CENTER);
     image(sprite, x+x%2, y+y%2, sprite.width*2, sprite.height*2);
 }
 
 function drawImageSmooth(sprite, x, y) {
+    imageMode(CENTER);
     image(sprite, x, y, sprite.width*2, sprite.height*2);
 }
 
 function drawCrosshair() {
-    imageMode(CENTER);
     drawImageSmooth(CROSSHAIR, mouseX, mouseY);
 }
 
@@ -448,13 +497,6 @@ function tiles() {
         for (var x = 0; x < LEVELS[level][room][y].length; x++) {
             if (LEVELS[level][room][y][x] == 1) drawImage(TILE1, x*32+16, y*32+16);
         }
-    }
-}
-
-function mouseClicked() {
-    if (state == "click") {
-        state = "menu";
-        noCursor();
     }
 }
 
