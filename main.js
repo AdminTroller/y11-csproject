@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "playing"; // Game state. click, menu, playing
+var state = "menu"; // Game state. click, menu, playing
 
 var inFade = false;
 var fadeTimer = 0;
@@ -127,8 +127,8 @@ function draw() { // Loop
         textAlign(CENTER, CENTER);
 
         if (menuState == "main") {
-            drawImage(MENU_BUTTON, 512, 248);
-            drawImage(MENU_BUTTON, 512, 344);
+            drawImage(MENU_BUTTON, 512, 246);
+            drawImage(MENU_BUTTON, 512, 342);
 
             textFont(FONT_SANS_BOLD);
             fill(0, 0, 0);
@@ -158,6 +158,34 @@ function draw() { // Loop
             text('Sprites - mi_gusta', 512, 520);
             text('Playtesting - no one yet', 512, 540);
 
+            if (mouseIsPressed) { //512 248
+                if (mouseX >= 512-128 && mouseX <= 512+128 && mouseY >= 246-32 && mouseY <= 246+32) {
+                    menuState = "play";
+                }
+            }
+
+        }
+        if (menuState == "play") {
+            drawImage(MENU_BUTTON, 512, 246);
+            drawImage(MENU_BUTTON, 512, 342);
+            drawImage(MENU_BUTTON, 512, 502);
+
+            textFont(FONT_SANS);
+            fill(0, 160, 0);
+            textSize(40);
+            text('New Game', 512, 240);
+
+            fill(100, 140, 0);
+            text('Continue', 512, 336);
+
+            fill(200, 0, 0);
+            text('Back', 512, 496);
+
+            if (mouseIsPressed) { //512 502
+                if (mouseX >= 512-128 && mouseX <= 512+128 && mouseY >= 502-32 && mouseY <= 502+32) {
+                    menuState = "main";
+                }
+            }
         }
 
         drawImage(BORDER, 512, 288);
