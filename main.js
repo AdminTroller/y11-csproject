@@ -128,10 +128,13 @@ function draw() { // Loop
         textSize(32);
         if (mouseIsPressed) menuEgg++;
         if (menuEgg < 240) text('- Click anywhere to start -', 512, 280);
-        else if (menuEgg < 480) text('...ok, you can let go now.', 512, 280);
-        else if (menuEgg < 720) text('Hey, you gotta let go to start the game.', 512, 280);
-        else if (menuEgg < 960) text('Come on, it\'s not hard.', 512, 280);
-        else if (menuEgg < 1200) text('You don\'t have to do anything. Literally.', 512, 280);
+        else if (menuEgg < 240*2) text('...ok, you can let go now.', 512, 280);
+        else if (menuEgg < 240*3) text('Hey, you gotta let go to start the game.', 512, 280);
+        else if (menuEgg < 240*4) text('Come on, it\'s not hard.', 512, 280);
+        else if (menuEgg < 240*5) text('You don\'t have to do anything. Literally.', 512, 280);
+        else if (menuEgg < 240*6) text('There\'s no .', 512, 280);
+        else if (menuEgg < 240*6) text('Why would you rather do this than play the game?', 512, 280);
+        else if (menuEgg < 240*7) text('I mean, the developer spent much more time and effort on the actual game.', 512, 280);
         else text('Don\'t you have anything better to do?', 512, 280);
 
         drawImage(BORDER, 512, 288);
