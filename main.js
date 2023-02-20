@@ -146,12 +146,14 @@ function draw() { // Loop
         var x = 512;
         var y = 180;
         if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
-            drawImage(MENU_BUTTON_HOVER, x, y);
+            drawImage(MENU_BUTTON_HOVER, x, y); // New Game
             if (mouseIsPressed) {
-                console.log("new game");
+                level = 0;
+                room = 0;
+                state = "playing";
             }
         }
-        else drawImage(MENU_BUTTON, x, y); // New Game button
+        else drawImage(MENU_BUTTON, x, y);
         textFont(FONT_SANS);
         fill(0, 180, 0);
         textSize(40);
@@ -159,12 +161,14 @@ function draw() { // Loop
 
         var y = 260;
         if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
-            drawImage(MENU_BUTTON_HOVER, x, y);
+            drawImage(MENU_BUTTON_HOVER, x, y); // Continue button
             if (mouseIsPressed) {
-                console.log("continue");
+                level = parseInt(localStorage.getItem("level"));
+                room = parseInt(localStorage.getItem("room"));
+                state = "playing";
             }
         }
-        else drawImage(MENU_BUTTON, x, y); // Continue button
+        else drawImage(MENU_BUTTON, x, y);
         fill(0, 140, 0);
         text('Continue', x, y-6);
 
@@ -211,6 +215,11 @@ function mouseClicked() {
         state = "menu";
         OVERWORLD.loop();
     }
+}
+
+function saveGame() {
+    localStorage.setItem("level", level);
+    localStorage.setItem("room", room);
 }
 
 function drawImage(sprite, x, y) {
@@ -444,6 +453,7 @@ function changeRoomFade() {
         enemyBullets = [];
         playerBullets = [];
         room = LEVEL_MAP[level][room][changeRoomDir];
+        saveGame();
 
         if (changeRoomDir == 0) playerY = CANVAS_HEIGHT - 12;
         if (changeRoomDir == 1) playerY = 12;
