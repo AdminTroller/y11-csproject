@@ -2,8 +2,8 @@ const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
 var state = "click"; // Game state. click, menu, playing
 
-var volume = 50;
-var volumeX;
+var volume = 0;
+var volumeX = 0;
 
 var inFade = false;
 var fadeTimer = 0;
@@ -55,9 +55,7 @@ function setup() { // Inital setup
     noSmooth();
     frameRate(60);
     enemySpawn();
-
-    if (localStorage.getItem("volume")) volume = localStorage.getItem("volume");
-    volumeX = volume - 50;
+    if (localStorage.getItem("volumeX")) volumeX = parseInt(localStorage.getItem("volumeX"));
 }
 
 function preload() { // Load sprites
@@ -227,16 +225,15 @@ function menu() {
         volumeX = mouseX - 512;
         if (volumeX < -150) volumeX = -150;
         if (volumeX > 150) volumeX = 150;
+        localStorage.setItem("volumeX", volumeX);
     }
     volume = Math.round((volumeX/3) + 50);
-    localStorage.setItem("volume", volume);
     OVERWORLD.setVolume(volume/100);
-    drawImageSmooth(VOLUME_SLIDER, 512, 386);
+    drawImage(VOLUME_SLIDER, 512, 386);
     drawImageSmooth(VOLUME_KNOB, volumeX + 512, 386);
     textSize(32);
     textAlign(LEFT, CENTER);
     text(volume + "%", 700, 384);
-
 
     drawImage(BORDER, 512, 288);
 }
