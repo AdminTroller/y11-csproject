@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "click"; // Game state. click, menu, playing
+var state = "playing"; // Game state. click, menu, playing
 
 var volume = 0;
 var volumeX = 0;
@@ -39,7 +39,7 @@ var room = 0;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 4];
-const ENEMY_HEALTH = [3, 1];
+const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0];
 const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 15];
@@ -72,6 +72,8 @@ function preload() { // Load sprites
     FULL_HEART = loadImage(PATH + "UI/full_heart.png");
     HALF_HEART = loadImage(PATH + "UI/half_heart.png");
     EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
+
+    COIN_LOGO = loadImage(PATH + "UI/coin_logo.png");
 
     AMMO_BOX = loadImage(PATH + "UI/ammo_box.png");
     RELOAD_BOX = loadImage(PATH + "UI/reload_box.png");
@@ -270,6 +272,7 @@ function drawCrosshair() {
 function ui() {
     uiHearts();
     uiAmmo();
+    uiCoins();
     drawCrosshair();
 }
 
@@ -302,6 +305,10 @@ function uiAmmo() {
     if (playerReload[playerGun] < gunReload[playerGun]) {
         drawImageSmooth(RELOAD_BOX, 70 - (playerReload[playerGun] * (140/gunReload[playerGun])), 548);
     }
+}
+
+function uiCoins() {
+
 }
 
 function fade() {
