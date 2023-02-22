@@ -118,6 +118,10 @@ function preload() { // Load sprites
     TILES1.push(loadImage(PATH + "Tiles/1/tile24.png"),loadImage(PATH + "Tiles/1/tile25.png"),loadImage(PATH + "Tiles/1/tile26.png"),loadImage(PATH + "Tiles/1/tile27.png"),loadImage(PATH + "Tiles/1/tile28.png"),loadImage(PATH + "Tiles/1/tile29.png"),loadImage(PATH + "Tiles/1/tile30.png"),loadImage(PATH + "Tiles/1/tile31.png"),loadImage(PATH + "Tiles/1/tile32.png"),loadImage(PATH + "Tiles/1/tile33.png"),loadImage(PATH + "Tiles/1/tile34.png"),loadImage(PATH + "Tiles/1/tile35.png"));
     TILES1.push(loadImage(PATH + "Tiles/1/tile36.png"),loadImage(PATH + "Tiles/1/tile37.png"),loadImage(PATH + "Tiles/1/tile38.png"),loadImage(PATH + "Tiles/1/tile39.png"),loadImage(PATH + "Tiles/1/tile40.png"),loadImage(PATH + "Tiles/1/tile41.png"),loadImage(PATH + "Tiles/1/tile42.png"),loadImage(PATH + "Tiles/1/tile43.png"),loadImage(PATH + "Tiles/1/tile44.png"),loadImage(PATH + "Tiles/1/tile45.png"),loadImage(PATH + "Tiles/1/tile46.png"));
 
+    COIN_BRONZE = loadImage(PATH + "Items/coin_bronze.png");
+    COIN_SILVER = loadImage(PATH + "Items/coin_silver.png");
+    COIN_GOLD = loadImage(PATH + "Items/coin_gold.png");
+
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
     MENU_BACKGROUND = loadImage(PATH + "Background/menu_background.png");
@@ -134,7 +138,6 @@ function preload() { // Load sprites
 function draw() { // Loop
     clear();
     if (windowWidth < CANVAS_WIDTH || windowHeight < CANVAS_HEIGHT) return; // Don't allow resolutions that are too small
-    debug();
     
     if (state == "click") {
         drawImage(MENU_BACKGROUND, 512, 288);
@@ -165,6 +168,7 @@ function draw() { // Loop
         ui();
         fade();
     }
+    debug();
 }
 
 function menu() {
@@ -811,7 +815,7 @@ class EnemyBullet {
 
 function debug() {
     textSize(32);
-    // text(playerHealth, 10, 40);
+    // drawImage(COIN_BRONZE, 100, 100);
 }
 
 function enemySpawn() { // (x, y, type, level, room)
