@@ -34,6 +34,7 @@ var playerAmmo = [gunAmmo[0]];
 var gunReload = [40];
 var playerReload = [40];
 
+var coins = 0;
 var level = 0;
 var room = 0;
 
@@ -73,6 +74,7 @@ function preload() { // Load sprites
     HALF_HEART = loadImage(PATH + "UI/half_heart.png");
     EMPTY_HEART = loadImage(PATH + "UI/empty_heart.png");
 
+    COIN_BOX = loadImage(PATH + "UI/coin_box.png");
     COIN_LOGO = loadImage(PATH + "UI/coin_logo.png");
 
     AMMO_BOX = loadImage(PATH + "UI/ammo_box.png");
@@ -308,7 +310,12 @@ function uiAmmo() {
 }
 
 function uiCoins() {
+    drawImage(COIN_BOX, 954, 28);
+    drawImage(COIN_LOGO, 992, 28);
 
+    drawImage(NUMBERS[Math.floor(coins/100)], 908, 28);
+    drawImage(NUMBERS[Math.floor(coins/10)%10], 926, 28);
+    drawImage(NUMBERS[coins%10], 944, 28);
 }
 
 function fade() {
