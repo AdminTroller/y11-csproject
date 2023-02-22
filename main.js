@@ -4,6 +4,7 @@ var state = "click"; // Game state. click, menu, playing
 
 var volume = 0;
 var volumeX = 0;
+var volumePressed = false;
 
 var inFade = false;
 var fadeTimer = 0;
@@ -169,7 +170,7 @@ function menu() {
 
     var x = 512;
     var y = 180;
-    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
+    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32 && !volumePressed) {
         drawImage(MENU_BUTTON_HOVER, x, y); // New Game
         if (mouseIsPressed) {
             level = 0;
@@ -184,7 +185,7 @@ function menu() {
     text('New Game', x, y-6);
 
     var y = 260;
-    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
+    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32 && !volumePressed) {
         drawImage(MENU_BUTTON_HOVER, x, y); // Continue button
         if (mouseIsPressed) {
             level = parseInt(localStorage.getItem("level"));
@@ -221,8 +222,10 @@ function menu() {
     text('Sprites - mi_gusta', 512, 520);
     text('Playtesting - no one yet', 512, 540);
 
-    if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) {
-        volumeX = mouseX - 512;
+    if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) volumePressed = true;
+    if (!mouseIsPressed) volumePressed = false;
+    if (volumePressed) {
+        volumeX = (mouseX - 512);
         if (volumeX < -150) volumeX = -150;
         if (volumeX > 150) volumeX = 150;
         localStorage.setItem("volumeX", volumeX);
