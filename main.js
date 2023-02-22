@@ -2,6 +2,9 @@ const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
 var state = "click"; // Game state. click, menu, playing
 
+var volume = 50;
+var volumeX;
+
 var inFade = false;
 var fadeTimer = 0;
 var fadeOpacity = 0;
@@ -52,6 +55,9 @@ function setup() { // Inital setup
     noSmooth();
     frameRate(60);
     enemySpawn();
+
+    if (localStorage.getItem("volume")) volume = localStorage.getItem("volume");
+    volumeX = volume - 50;
 }
 
 function preload() { // Load sprites
@@ -84,6 +90,8 @@ function preload() { // Load sprites
     NINE = loadImage(PATH + "UI/9.png");
     SLASH = loadImage(PATH + "UI/slash.png");
     NUMBERS = [ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,SLASH];
+    VOLUME_KNOB = loadImage(PATH + "UI/volume_knob.png");
+    VOLUME_SLIDER = loadImage(PATH + "UI/volume_slider.png");
 
     ENEMY0 = loadImage(PATH + "Enemy/1/enemy0.png");
     ENEMY0_HURT = loadImage(PATH + "Enemy/1/enemy0_hurt.png");
@@ -113,7 +121,7 @@ function preload() { // Load sprites
     
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
-    OVERWORLD.setVolume(0.5);
+    OVERWORLD.setVolume(volume/100);
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -143,67 +151,8 @@ function draw() { // Loop
 
         drawImage(BORDER, 512, 288);
     }
-    if (state == "menu") {
-        cursor();
-        drawImage(MENU_BACKGROUND, 512, 288);
-        textAlign(CENTER, CENTER);
 
-        var x = 512;
-        var y = 180;
-        if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
-            drawImage(MENU_BUTTON_HOVER, x, y); // New Game
-            if (mouseIsPressed) {
-                level = 0;
-                room = 0;
-                state = "playing";
-            }
-        }
-        else drawImage(MENU_BUTTON, x, y);
-        textFont(FONT_SANS);
-        fill(0, 180, 0);
-        textSize(40);
-        text('New Game', x, y-6);
-
-        var y = 260;
-        if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
-            drawImage(MENU_BUTTON_HOVER, x, y); // Continue button
-            if (mouseIsPressed) {
-                level = parseInt(localStorage.getItem("level"));
-                room = parseInt(localStorage.getItem("room"));
-                state = "playing";
-            }
-        }
-        else drawImage(MENU_BUTTON, x, y);
-        fill(0, 140, 0);
-        text('Continue', x, y-6);
-
-        textSize(32);
-        fill(200, 150, 0);
-        text('Volume', 512, 336);
-
-        textFont(FONT_SANS_BOLD);
-        fill(0, 0, 0);
-        textSize(48);
-        text('Shooty Game', 512, 32);
-
-        fill(69, 69, 69);
-        textSize(24);
-        text('Year 11 CS Project', 512, 80);
-
-        textFont(FONT_SANS);
-        fill(128, 128, 0);
-        textSize(24);
-        text('Credits', 512, 450);
-
-        fill(64, 64, 64);
-        textSize(16);
-        text('Programming - AdminTroller', 512, 500);
-        text('Music - AdminTroller', 512, 480);
-        text('Sprites - mi_gusta', 512, 520);
-        text('Playtesting - no one yet', 512, 540);
-
-        drawImage(BORDER, 512, 288);
-    }
+    if (state == "menu") menu();
 
     if (state == "playing") {
         noCursor();
@@ -213,6 +162,83 @@ function draw() { // Loop
         ui();
         fade();
     }
+}
+
+function menu() {
+    cursor();
+    drawImage(MENU_BACKGROUND, 512, 288);
+    textAlign(CENTER, CENTER);
+
+    var x = 512;
+    var y = 180;
+    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
+        drawImage(MENU_BUTTON_HOVER, x, y); // New Game
+        if (mouseIsPressed) {
+            level = 0;
+            room = 0;
+            state = "playing";
+        }
+    }
+    else drawImage(MENU_BUTTON, x, y);
+    textFont(FONT_SANS);
+    fill(0, 180, 0);
+    textSize(40);
+    text('New Game', x, y-6);
+
+    var y = 260;
+    if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32) {
+        drawImage(MENU_BUTTON_HOVER, x, y); // Continue button
+        if (mouseIsPressed) {
+            level = parseInt(localStorage.getItem("level"));
+            room = parseInt(localStorage.getItem("room"));
+            state = "playing";
+        }
+    }
+    else drawImage(MENU_BUTTON, x, y);
+    fill(0, 140, 0);
+    text('Continue', x, y-6);
+
+    textSize(32);
+    fill(200, 150, 0);
+    text('Volume', 512, 336);
+
+    textFont(FONT_SANS_BOLD);
+    fill(0, 0, 0);
+    textSize(48);
+    text('Shooty Game', 512, 32);
+
+    fill(69, 69, 69);
+    textSize(24);
+    text('Year 11 CS Project', 512, 80);
+
+    textFont(FONT_SANS);
+    fill(128, 128, 0);
+    textSize(24);
+    text('Credits', 512, 450);
+
+    fill(64, 64, 64);
+    textSize(16);
+    text('Programming - AdminTroller', 512, 500);
+    text('Music - AdminTroller', 512, 480);
+    text('Sprites - mi_gusta', 512, 520);
+    text('Playtesting - no one yet', 512, 540);
+
+    if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) {
+        volumeX = mouseX - 512;
+        if (volumeX < -150) volumeX = -150;
+        if (volumeX > 150) volumeX = 150;
+    }
+    volume = Math.round((volumeX/3) + 50);
+    localStorage.setItem("volume", volume);
+    OVERWORLD.setVolume(volume/100);
+    drawImageSmooth(VOLUME_SLIDER, 512, 386);
+    drawImageSmooth(VOLUME_KNOB, volumeX + 512, 386);
+    textSize(32);
+    textAlign(LEFT, CENTER);
+    text(volume + "%", 700, 384);
+
+
+    drawImage(BORDER, 512, 288);
 }
 
 function mouseClicked() {
