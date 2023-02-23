@@ -43,12 +43,16 @@ const ENEMY_SPEED = [1.5, 4];
 const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0];
-const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 15];
+const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 0];
+const ENEMY_COIN = [0, 0];
 
 var enemyBullets = [];
 const ENEMY_BULLET_SPEED = [4.5, 10];
 const ENEMY_FIRING_COOLDOWN_BASE = [60];
 var enemyFiringCooldown = 0;
+
+var coinsDropped = [];
+const COIN_VALUE = [1, 5, 10];
 
 var menuEgg = 0;
 
@@ -163,6 +167,7 @@ function draw() { // Loop
     if (state == "playing") {
         noCursor();
         tiles();
+        item();
         enemy();
         player();
         ui();
@@ -324,6 +329,19 @@ function uiCoins() {
 
 function fade() {
     if (allowChangeRoomFade) changeRoomFade();
+}
+
+function item() {
+    for (var i = 0; i < coinsDropped.length; i++) {
+        var coin = coinsDropped[i];
+        coin.update();
+
+        if (Math.abs(coin.x - playerX) < 16 && Math.abs(coin.y - playerY) < 24) {
+            coin.collect();
+            coinsDropped.splice(i,1);
+            i--;
+        }
+    }
 }
 
 function player() {
@@ -748,6 +766,7 @@ class Enemy {
 
     die() {
         this.dead = true;
+        coinsDropped.push(new Coin(this.x, this.y, ENEMY_COIN[this.type], level, room));
     }
 
     vision() {
@@ -810,6 +829,32 @@ class EnemyBullet {
 
     draw() {
         drawImageSmooth(ENEMY_BULLET_SPRITES[this.type], this.x, this.y);
+    }
+}
+
+class Coin {
+    constructor(x, y, type, level, room) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.level = level;
+        this.room = room;
+    }
+
+    update() {
+        this.draw();
+    }
+
+    collect() {
+        coins += COIN_VALUE[this.type];
+    }
+
+    draw() {
+        if (this.level == level && this.room == room) {
+            if (this.type == 0) drawImage(COIN_BRONZE, this.x, this.y);
+            if (this.type == 1) drawImage(COIN_SILVER, this.x, this.y);
+            if (this.type == 2) drawImage(COIN_GOLD, this.x, this.y);
+        }
     }
 }
 
