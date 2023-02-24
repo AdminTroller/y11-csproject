@@ -122,11 +122,10 @@ function preload() { // Load sprites
     TILES1.push(loadImage(PATH + "Tiles/1/tile24.png"),loadImage(PATH + "Tiles/1/tile25.png"),loadImage(PATH + "Tiles/1/tile26.png"),loadImage(PATH + "Tiles/1/tile27.png"),loadImage(PATH + "Tiles/1/tile28.png"),loadImage(PATH + "Tiles/1/tile29.png"),loadImage(PATH + "Tiles/1/tile30.png"),loadImage(PATH + "Tiles/1/tile31.png"),loadImage(PATH + "Tiles/1/tile32.png"),loadImage(PATH + "Tiles/1/tile33.png"),loadImage(PATH + "Tiles/1/tile34.png"),loadImage(PATH + "Tiles/1/tile35.png"));
     TILES1.push(loadImage(PATH + "Tiles/1/tile36.png"),loadImage(PATH + "Tiles/1/tile37.png"),loadImage(PATH + "Tiles/1/tile38.png"),loadImage(PATH + "Tiles/1/tile39.png"),loadImage(PATH + "Tiles/1/tile40.png"),loadImage(PATH + "Tiles/1/tile41.png"),loadImage(PATH + "Tiles/1/tile42.png"),loadImage(PATH + "Tiles/1/tile43.png"),loadImage(PATH + "Tiles/1/tile44.png"),loadImage(PATH + "Tiles/1/tile45.png"),loadImage(PATH + "Tiles/1/tile46.png"));
 
-    COIN_BRONZE_TEMP = loadImage(PATH + "Items/Coins/coin_bronze.png");
-    COIN_SILVER = loadImage(PATH + "Items/Coins/coin_silver.png");
     COIN_GOLD = loadImage(PATH + "Items/Coins/coin_gold.png");
 
     COIN_BRONZE = [loadImage(PATH + "Items/Coins/coin_bronze1.png"),loadImage(PATH + "Items/Coins/coin_bronze2.png"),loadImage(PATH + "Items/Coins/coin_bronze3.png"),loadImage(PATH + "Items/Coins/coin_bronze4.png"),loadImage(PATH + "Items/Coins/coin_bronze5.png"),loadImage(PATH + "Items/Coins/coin_bronze6.png"),loadImage(PATH + "Items/Coins/coin_bronze7.png"),loadImage(PATH + "Items/Coins/coin_bronze8.png"),loadImage(PATH + "Items/Coins/coin_bronze9.png")];
+    COIN_SILVER = [loadImage(PATH + "Items/Coins/coin_silver1.png"),loadImage(PATH + "Items/Coins/coin_silver2.png"),loadImage(PATH + "Items/Coins/coin_silver3.png"),loadImage(PATH + "Items/Coins/coin_silver4.png"),loadImage(PATH + "Items/Coins/coin_silver5.png"),loadImage(PATH + "Items/Coins/coin_silver6.png"),loadImage(PATH + "Items/Coins/coin_silver7.png"),loadImage(PATH + "Items/Coins/coin_silver8.png"),loadImage(PATH + "Items/Coins/coin_silver9.png")];
 
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
@@ -859,7 +858,7 @@ class Coin {
 
         if (this.level == level && this.room == room) {
             if (this.type == 0) drawImage(COIN_BRONZE[this.animation], this.x, this.y);
-            if (this.type == 1) drawImage(COIN_SILVER, this.x, this.y);
+            if (this.type == 1) drawImage(COIN_SILVER[this.animation], this.x, this.y);
             if (this.type == 2) drawImage(COIN_GOLD, this.x, this.y);
 
             if (this.animationDelay >= 3) {
