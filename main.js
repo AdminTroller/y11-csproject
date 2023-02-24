@@ -338,7 +338,7 @@ function item() {
         var coin = coinsDropped[i];
         coin.update();
 
-        if (Math.abs(coin.x - playerX) < 24 && Math.abs(coin.y - playerY) < 32) {
+        if (Math.abs(coin.x - playerX) < 28 && Math.abs(coin.y - playerY) < 36) {
             coin.collect();
             coinsDropped.splice(i,1);
             i--;
