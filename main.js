@@ -52,7 +52,10 @@ const ENEMY_FIRING_COOLDOWN_BASE = [60];
 var enemyFiringCooldown = 0;
 
 var coinsDropped = [];
-const COIN_VALUE = [1, 5, 10];
+const COIN_VALUE = [1, 3, 10];
+
+var paused = false;
+var pauseTemp = false;
 
 var menuEgg = 0;
 
@@ -172,6 +175,7 @@ function draw() { // Loop
         player();
         ui();
         fade();
+        pause();
     }
     debug();
 }
@@ -284,7 +288,7 @@ function ui() {
     uiHearts();
     uiAmmo();
     uiCoins();
-    drawCrosshair();
+    if (!paused) drawCrosshair();
 }
 
 function uiHearts() {
@@ -347,12 +351,15 @@ function item() {
 function player() {
     if (!playerDead) {
         if (!inFade) {
-            playerMovement();
+            if (!paused) {
+                playerMovement();
+                reload();
+                playerHurt();
+                playerMoveEdge();
+            }
             playerShooting();
-            reload();
-            playerHurt();
-            playerMoveEdge();
         }
+        
         playerDraw();
     }
 }
@@ -393,13 +400,15 @@ function playerMovement() {
 }
 
 function playerShooting() {
-    if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
-    if (mouseIsPressed && (playerInRoom || level_clear[level][room])) {
-        if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
-            var bullet = new PlayerBullet();
-            playerBullets.push(bullet);
-            playerFiringCooldown = 0;
-            playerAmmo[playerGun] -= 1;
+    if (!paused) {
+        if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
+        if (mouseIsPressed && (playerInRoom || level_clear[level][room])) {
+            if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
+                var bullet = new PlayerBullet();
+                playerBullets.push(bullet);
+                playerFiringCooldown = 0;
+                playerAmmo[playerGun] -= 1;
+            }
         }
     }
 
@@ -610,6 +619,27 @@ function tiles() {
     }
 }
 
+function pause() {
+    if (keyIsDown(27) && !pauseTemp && !inFade) { // Esc pressed
+        paused = !paused;
+        pauseTemp = true;
+    }
+    if (!keyIsDown(27)) pauseTemp = false;
+
+    if (paused) {
+        cursor();
+        background(0, 0, 0, 128);
+        textFont(FONT_SANS_BOLD);
+        textSize(48);
+        textAlign(CENTER, CENTER);
+        fill(200, 200, 200);
+        text("- Paused -", 512, 288);
+    }
+    else {
+        noCursor();
+    }
+}
+
 class PlayerBullet {
     constructor() {
         this.x = playerX;
@@ -625,7 +655,7 @@ class PlayerBullet {
     }
 
     update() {
-        this.move();
+        if (!paused) this.move();
         this.draw();
     }
 
@@ -659,7 +689,7 @@ class Enemy {
     update() {
         if (this.level == level && this.room == room) {
             if (!this.dead) {
-                if (!playerDead && !inFade && playerInRoom) {
+                if (!playerDead && !inFade && playerInRoom && !paused) {
                     if (this.seePlayer) this.move();
                     this.shoot();
                     this.hurt();
@@ -816,7 +846,7 @@ class EnemyBullet {
     }
 
     update() {
-        if (!inFade) {
+        if (!inFade && !paused) {
             this.move();
         }
         this.draw();
@@ -864,7 +894,7 @@ class Coin {
                 if ((this.animation >= 8 && this.animationDir > 0) || (this.animation <= 0 && this.animationDir < 0)) this.animationDir *= -1;
                 this.animation += this.animationDir;
             }
-            this.animationDelay++;
+            if (!paused) this.animationDelay++;
             if (this.animationDelay >= 4) this.animationDelay = 0;
         }
     }
