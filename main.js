@@ -43,7 +43,7 @@ const ENEMY_SPEED = [1.5, 3.5];
 const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0];
-const ENEMY_SPREAD_PLAYER_DISTANCE = [80, 0];
+const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0];
 const ENEMY_COIN = [0, 0];
 
 var enemyBullets = [];
@@ -54,7 +54,7 @@ var enemyFiringCooldown = 0;
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
 
-var saveRooms = [[0, 0]];
+var saveRooms = [[0, 9]];
 
 var paused = false;
 var pauseTemp = false;
