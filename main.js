@@ -54,7 +54,7 @@ var enemyFiringCooldown = 0;
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
 
-var saveRooms = [[0, 9]];
+var saveRooms = [[0, 0]];
 
 var paused = false;
 var pauseTemp = false;
@@ -73,6 +73,7 @@ function preload() { // Load sprites
     PATH = "Sprites/";
     PLAYER = loadImage(PATH + "Player/player.png");
     PLAYER_HURT = loadImage(PATH + "Player/player_hurt.png");
+    SAVE_INDICATOR = loadImage(PATH + "Player/save_indicator.png");
 
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
@@ -105,11 +106,16 @@ function preload() { // Load sprites
     VOLUME_KNOB = loadImage(PATH + "UI/volume_knob.png");
     VOLUME_SLIDER = loadImage(PATH + "UI/volume_slider.png");
 
-    ENEMY0 = loadImage(PATH + "Enemy/1/enemy0.png");
+    ENEMY0_IDLE = loadImage(PATH + "Enemy/1/enemy0_idle.png");
+    ENEMY0_WALK1 = loadImage(PATH + "Enemy/1/enemy0_walk1.png");
+    ENEMY0_WALK2 = loadImage(PATH + "Enemy/1/enemy0_walk2.png");
     ENEMY0_HURT = loadImage(PATH + "Enemy/1/enemy0_hurt.png");
-    ENEMY1 = loadImage(PATH + "Enemy/1/enemy1.png");
+
+    ENEMY1_IDLE = loadImage(PATH + "Enemy/1/enemy1.png");
+    ENEMY1_WALK1 = loadImage(PATH + "Enemy/1/enemy1.png");
+    ENEMY1_WALK2 = loadImage(PATH + "Enemy/1/enemy1.png");
     ENEMY1_HURT = loadImage(PATH + "Enemy/1/enemy1.png");
-    ENEMY_SPRITES = [ENEMY0, ENEMY1];
+    ENEMY_SPRITES = [[ENEMY0_IDLE,ENEMY0_WALK1,ENEMY0_WALK2,ENEMY0_HURT], [ENEMY1_IDLE,ENEMY1_WALK1,ENEMY1_WALK2,ENEMY1_HURT]];
     ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
     C4 = loadImage(PATH + "Enemy/3/c4.png");
 
@@ -511,7 +517,7 @@ function playerHurt() {
 function playerSave() {
     for (var i = 0; i < saveRooms.length; i++) {
         if (saveRooms[i][0] == level && saveRooms[i][1] == room && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) { 
-            drawImage(COIN_BRONZE[0], playerX, playerY-32);
+            drawImage(SAVE_INDICATOR, playerX, playerY+40);
             if (keyIsDown(32)) saveGame();
         }
     }
@@ -716,6 +722,10 @@ class Enemy {
         this.firingCooldown = 0;
         this.firingSlowdown = 1;
 
+        this.animation = 0;
+        this.animationWalk = 1;
+        this.animationTimer = 0;
+
         this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
     }
 
@@ -724,6 +734,7 @@ class Enemy {
             if (!this.dead) {
                 if (!playerDead && !inFade && playerInRoom && !paused) {
                     if (this.seePlayer) this.move();
+                    else this.animation = 0;
                     this.shoot();
                     this.hurt();
                     this.vision();
@@ -795,6 +806,16 @@ class Enemy {
             this.x += dx/4;
             this.y += dy/4;
         }
+
+        if (dx == 0 && dy == 0) this.animation = 0;
+        else {
+            this.animationTimer++;
+            if (this.animationTimer >= 30) {
+                this.animationWalk = 3 - this.animationWalk
+                this.animationTimer = 0;
+            }
+            this.animation = this.animationWalk;
+        }
         
     }
 
@@ -803,6 +824,7 @@ class Enemy {
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
             this.hurtTime++; 
             this.firingSlowdown = 0.75;
+            this.animation = 3;
         }
         else this.firingSlowdown = 1;
 
@@ -859,8 +881,9 @@ class Enemy {
     }
 
     draw() {
-        if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_HURT_SPRITES[this.type], this.x, this.y);
-        else drawImageSmooth(ENEMY_SPRITES[this.type], this.x, this.y);
+        // if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_SPRITES[this.type][3], this.x, this.y);
+        // else drawImageSmooth(ENEMY_SPRITES[this.type][0], this.x, this.y);
+        drawImageSmooth(ENEMY_SPRITES[this.type][this.animation], this.x, this.y);
     }
 }
 
