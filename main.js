@@ -12,7 +12,7 @@ var fadeOpacity = 0;
 var fadeOut = false;
 
 var playerX = 512;
-var playerY = 400;
+var playerY = 336;
 var playerSpeed = 4;
 var playerHealth = 6;
 const PLAYER_HURT_TIME_BASE = 60;
@@ -36,10 +36,10 @@ var playerReload = [40];
 
 var coins = 0;
 var level = 0;
-var room = 0;
+var room = 3;
 
 var enemies = [];
-const ENEMY_SPEED = [1.5, 4];
+const ENEMY_SPEED = [1.5, 3.5];
 const ENEMY_HEALTH = [4, 1];
 const ENEMY_HURT_TIME_BASE = [30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0];
@@ -53,6 +53,8 @@ var enemyFiringCooldown = 0;
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
+
+var saveRooms = [[0, 9]];
 
 var paused = false;
 var pauseTemp = false;
@@ -132,6 +134,8 @@ function preload() { // Load sprites
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
     MENU_BACKGROUND = loadImage(PATH + "Background/menu_background.png");
+
+    SAVE_POINT = loadImage(PATH + "Items/save_point.png");
     
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
@@ -255,6 +259,15 @@ function menu() {
     textAlign(LEFT, CENTER);
     text(volume + "%", 700, 384);
 
+    if (keyIsDown(46)) { // TEMPORARY DEBUG DELETE DATA
+        level = 0;
+        room = 0;
+        saveGame();
+    }
+    textSize(12);
+    fill(0, 0, 0);
+    text("press Delete to delete data (temporary debug)", 710, 556);
+
     drawImage(BORDER, 512, 288);
 }
 
@@ -346,6 +359,13 @@ function item() {
             i--;
         }
     }
+
+    for (var i = 0; i < saveRooms.length; i++) {
+        if (saveRooms[i][0] == level && saveRooms[i][1] == room) { 
+            drawImage(SAVE_POINT, 512, 288);
+        }
+    }
+
 }
 
 function player() {
@@ -356,6 +376,7 @@ function player() {
                 reload();
                 playerHurt();
                 playerMoveEdge();
+                playerSave();
             }
             playerShooting();
         }
@@ -397,6 +418,9 @@ function playerMovement() {
 
     if (okX) playerX += dx;
     if (okY) playerY += dy;
+
+    if (level_clear[level][room]) playerSpeed = 6;
+    else playerSpeed = 4;
 }
 
 function playerShooting() {
@@ -484,6 +508,15 @@ function playerHurt() {
     }
 }
 
+function playerSave() {
+    for (var i = 0; i < saveRooms.length; i++) {
+        if (saveRooms[i][0] == level && saveRooms[i][1] == room && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) { 
+            drawImage(COIN_BRONZE[0], playerX, playerY-32);
+            if (keyIsDown(32)) saveGame();
+        }
+    }
+}
+
 function playerDie() {
     playerDead = true;
     console.log("you died");
@@ -529,7 +562,6 @@ function changeRoomFade() {
         enemyBullets = [];
         playerBullets = [];
         room = LEVEL_MAP[level][room][changeRoomDir];
-        saveGame();
 
         if (changeRoomDir == 0) playerY = CANVAS_HEIGHT - 12;
         if (changeRoomDir == 1) playerY = 12;
@@ -605,7 +637,7 @@ function tiles() {
         }
     }
 
-    if (level_clear[level][room] == false && playerInRoom) {
+    if (!level_clear[level][room] && playerInRoom) {
         drawImage(BARRIER_HORIZONTAL, 512, 32);
         drawImage(BARRIER_HORIZONTAL, 512, 544);
         drawImage(BARRIER_VERTICAL, 32, 288);
@@ -682,6 +714,7 @@ class Enemy {
         this.dead = false;
         this.seePlayer = false;
         this.firingCooldown = 0;
+        this.firingSlowdown = 1;
 
         this.hurtTime = ENEMY_HURT_TIME_BASE[this.type];
     }
@@ -769,8 +802,9 @@ class Enemy {
         this.playerBullets = playerBullets;
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
             this.hurtTime++; 
-            this.firingCooldown = 0; //uncomment this if you want enemies to not shoot when getting hurt
+            this.firingSlowdown = 0.75;
         }
+        else this.firingSlowdown = 1;
 
         for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
             var bullet = playerBullets[i];
@@ -786,8 +820,8 @@ class Enemy {
     }
 
     shoot() {
-        if (this.firingCooldown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
-        if (this.firingCooldown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
+        if (this.firingCooldown * this.firingSlowdown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
+        if (this.firingCooldown * this.firingSlowdown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
             var bullet = new EnemyBullet(this.x, this.y, this.type);
             enemyBullets.push(bullet);
             this.firingCooldown = Math.random() * 10 - 5;
@@ -902,19 +936,23 @@ class Coin {
 
 function debug() {
     textSize(32);
-    // drawImage(COIN_BRONZE, 100, 100);
 }
 
 function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(400, 160, 0, 0, 1));
     enemies.push(new Enemy(640, 160, 0, 0, 1));
 
-    enemies.push(new Enemy(144, 150, 0, 0, 2));
-    enemies.push(new Enemy(144, 426, 0, 0, 2));
-    enemies.push(new Enemy(300, 288, 1, 0, 2));
+    enemies.push(new Enemy(200, 150, 0, 0, 2));
+    enemies.push(new Enemy(200, 426, 0, 0, 2));
+    enemies.push(new Enemy(144, 288, 1, 0, 2));
 
     enemies.push(new Enemy(800, 244, 0, 0, 3));
     enemies.push(new Enemy(800, 332, 0, 0, 3));
+
+    enemies.push(new Enemy(150, 200, 1, 0, 5));
+    enemies.push(new Enemy(136, 300, 0, 0, 5));
+    enemies.push(new Enemy(885, 250, 0, 0, 5));
+    enemies.push(new Enemy(875, 360, 1, 0, 5));
 }
 
 var level1_clear = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
@@ -1001,14 +1039,58 @@ const LEVEL1_3 = [
     [26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26],
 ];
 
-const LEVEL1 = [LEVEL1_0,LEVEL1_1,LEVEL1_2,LEVEL1_3];
+const LEVEL1_4 = [
+    [26,26,26,26,26,26,26,26,26,26,26,26,26,27,"","","","",25,26,26,26,26,26,26,26,26,26,26,26,26,26],
+    [26,32,38,38,38,38,38,38,38,38,38,38,38,39,"","","","",37,38,38,38,38,38,38,38,38,38,38,38,33,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,44,14,14,14,14,14,14,14,14,14,14,14,15,"","","","",13,14,14,14,14,14,14,14,14,14,14,14,45,26],
+    [26,26,26,26,26,26,26,26,26,26,26,26,26,27,"","","","",25,26,26,26,26,26,26,26,26,26,26,26,26,26],
+];
+
+const LEVEL1_5 = [
+    [26,26,26,26,26,26,26,26,26,26,26,26,26,27,"","","","",25,26,26,26,26,26,26,26,26,26,26,26,26,26],
+    [26,26,26,32,38,38,38,38,38,38,38,38,38,39,"","","","",37,38,38,38,38,38,38,38,38,38,33,26,26,26],
+    [26,26,26,27,"","","","","","","","","","","","","","","","","","","","","","","","",25,26,26,26],
+    [26,32,38,39,"","","","","","","","","","","","","","","","","","","","","","","","",37,38,33,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,27,"","","","","","","","","","","","","","","","","","","","","","","","","","","","",25,26],
+    [26,44,14,15,"","","","","","","","","","","","","","","","","","","","","","","","",13,14,45,26],
+    [26,26,26,27,"","","","","","","","","","","","","","","","","","","","","","","","",25,26,26,26],
+    [26,26,26,44,14,14,14,14,14,14,14,14,14,15,"","","","",13,14,14,14,14,14,14,14,14,14,45,26,26,26],
+    [26,26,26,26,26,26,26,26,26,26,26,26,26,27,"","","","",25,26,26,26,26,26,26,26,26,26,26,26,26,26],
+];
+
+const LEVEL1 = [LEVEL1_0,LEVEL1_1,LEVEL1_2,LEVEL1_3,LEVEL1_4,LEVEL1_5];
 const LEVELS = [LEVEL1];
 
 const LEVEL1_MAP = [ // [up, down, left, right]
     [1, 0, 0, 0], // Room 0
-    [0, 0, 2, 3], // Room 1 etc.
-    [2, 0, 0, 1],
-    [3, 0, 1, 0],
+    [0, 0, 2, 3], // Room 1
+    [4, 0, 0, 1], // Room 2 etc.
+    [5, 0, 1, 0],
+    [4, 2, 0, 0],
+    [5, 3, 0, 0],
 ];
 const LEVEL_MAP = [LEVEL1_MAP];
 
