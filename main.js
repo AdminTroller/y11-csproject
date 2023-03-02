@@ -457,7 +457,7 @@ function playerShooting() {
         for (var y = 0; y < LEVELS[level][room].length; y++) {
             for (var x = 0; x < LEVELS[level][room][y].length; x++) {
                 if (LEVELS[level][room][y][x].length != 0) {
-                    if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
+                    if (Math.abs(bullet.x - (x*32+16)) < 20 && Math.abs(bullet.y - (y*32+16)) < 20) {
                         playerBullets.splice(i, 1); // Remove bullet
                         i--;
                         var temp = false;
@@ -598,7 +598,7 @@ function enemy() {
         for (var y = 0; y < LEVELS[level][room].length; y++) {
             for (var x = 0; x < LEVELS[level][room][y].length; x++) {
                 if (LEVELS[level][room][y][x].length != 0) {
-                    if (Math.abs(bullet.x - (x*32+16)) < 24 && Math.abs(bullet.y - (y*32+16)) < 24) {
+                    if (Math.abs(bullet.x - (x*32+16)) < 20 && Math.abs(bullet.y - (y*32+16)) < 20) {
                         enemyBullets.splice(i, 1); // Remove bullet
                         i--;
                         var temp = false;
@@ -726,6 +726,9 @@ class Enemy {
         this.health = ENEMY_HEALTH[this.type];
         this.dead = false;
         this.seePlayer = false;
+        this.pursuit = false;
+        this.pursuitTimer = 0;
+        this.pursuitTemp = false;
         this.firingCooldown = 0;
         this.firingSlowdown = 1;
 
@@ -740,7 +743,7 @@ class Enemy {
         if (this.level == level && this.room == room) {
             if (!this.dead) {
                 if (!playerDead && !inFade && playerInRoom && !paused) {
-                    if (this.seePlayer) this.move();
+                    if (this.seePlayer || this.pursuit) this.move();
                     else this.animation = 0;
                     this.shoot();
                     this.hurt();
@@ -805,6 +808,10 @@ class Enemy {
             }
             
         }
+
+        if (this.pursuit) this.pursuitTimer++;
+        if (this.pursuitTimer > 120) this.pursuit = false;
+
         if (this.hurtTime >= ENEMY_HURT_TIME_BASE[this.type]) {
             this.x += dx;
             this.y += dy;
@@ -879,6 +886,12 @@ class Enemy {
                     if (LEVELS[level][room][y][x].length != 0) {
                         if (Math.abs((tempX) - (x*32+16)) < 18 && Math.abs(tempY - (y*32+16)) < 18) {
                             this.seePlayer = false;
+
+                            if (this.pursuitTemp) {
+                                this.pursuit = true;
+                                this.pursuitTimer = 0;
+                            }
+                            this.pursuitTemp = false;
                             break;
                         }
                     }
@@ -887,11 +900,15 @@ class Enemy {
             tempX += deltaX / divider;
             tempY += deltaY / divider;
         }
+
+        if (this.seePlayer) {
+            this.pursuitTemp = true;
+            this.pursuit = false;
+            this.pursuitTimer = 0;
+        }
     }
 
     draw() {
-        // if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) drawImageSmooth(ENEMY_SPRITES[this.type][3], this.x, this.y);
-        // else drawImageSmooth(ENEMY_SPRITES[this.type][0], this.x, this.y);
         drawImageSmooth(ENEMY_SPRITES[this.type][this.animation], this.x, this.y);
     }
 }
@@ -973,7 +990,7 @@ function debug() {
 function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(400, 160, 0, 0, 1));
     enemies.push(new Enemy(640, 160, 0, 0, 1));
-    enemies.push(new Enemy(740, 160, 2, 0, 1));
+    // enemies.push(new Enemy(740, 160, 2, 0, 1));
 
     enemies.push(new Enemy(200, 150, 0, 0, 2));
     enemies.push(new Enemy(200, 426, 0, 0, 2));
