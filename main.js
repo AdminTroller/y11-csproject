@@ -39,16 +39,16 @@ var level = 0;
 var room = 0;
 
 var enemies = [];
-const ENEMY_SPEED = [1.5, 3.5];
-const ENEMY_HEALTH = [4, 1];
-const ENEMY_HURT_TIME_BASE = [30, 20];
-const ENEMY_SPREAD_DISTANCE = [40, 0];
-const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0];
-const ENEMY_COIN = [0, 0];
+const ENEMY_SPEED = [1.5, 3.5, 1.5];
+const ENEMY_HEALTH = [4, 1, 6];
+const ENEMY_HURT_TIME_BASE = [30, 20, 30];
+const ENEMY_SPREAD_DISTANCE = [40, 0, 40];
+const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0, 100];
+const ENEMY_COIN = [0, 0, 1];
 
 var enemyBullets = [];
-const ENEMY_BULLET_SPEED = [4.5, 10];
-const ENEMY_FIRING_COOLDOWN_BASE = [60];
+const ENEMY_BULLET_SPEED = [4.5, 10, 4.5];
+const ENEMY_FIRING_COOLDOWN_BASE = [60, 0, 20];
 var enemyFiringCooldown = 0;
 
 var coinsDropped = [];
@@ -115,13 +115,20 @@ function preload() { // Load sprites
     ENEMY1_WALK1 = loadImage(PATH + "Enemy/1/enemy1.png");
     ENEMY1_WALK2 = loadImage(PATH + "Enemy/1/enemy1.png");
     ENEMY1_HURT = loadImage(PATH + "Enemy/1/enemy1.png");
-    ENEMY_SPRITES = [[ENEMY0_IDLE,ENEMY0_WALK1,ENEMY0_WALK2,ENEMY0_HURT], [ENEMY1_IDLE,ENEMY1_WALK1,ENEMY1_WALK2,ENEMY1_HURT]];
+
+    ENEMY2_IDLE = loadImage(PATH + "Enemy/1/enemy2_idle.png");
+    ENEMY2_WALK1 = loadImage(PATH + "Enemy/1/enemy2_walk1.png");
+    ENEMY2_WALK2 = loadImage(PATH + "Enemy/1/enemy2_walk2.png");
+    ENEMY2_HURT = loadImage(PATH + "Enemy/1/enemy2_hurt.png");
+
+    ENEMY_SPRITES = [[ENEMY0_IDLE,ENEMY0_WALK1,ENEMY0_WALK2,ENEMY0_HURT], [ENEMY1_IDLE,ENEMY1_WALK1,ENEMY1_WALK2,ENEMY1_HURT], [ENEMY2_IDLE,ENEMY2_WALK1,ENEMY2_WALK2,ENEMY2_HURT]];
     ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
     C4 = loadImage(PATH + "Enemy/3/c4.png");
 
     ENEMY0_BULLET = loadImage(PATH + "Enemy/bullet0.png");
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
-    ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET];
+    ENEMY2_BULLET = loadImage(PATH + "Enemy/bullet2.png");
+    ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET, ENEMY2_BULLET];
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
@@ -823,7 +830,7 @@ class Enemy {
         this.playerBullets = playerBullets;
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
             this.hurtTime++; 
-            this.firingSlowdown = 0.75;
+            this.firingSlowdown = 0.6;
             this.animation = 3;
         }
         else this.firingSlowdown = 1;
@@ -842,11 +849,13 @@ class Enemy {
     }
 
     shoot() {
-        if (this.firingCooldown * this.firingSlowdown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
-        if (this.firingCooldown * this.firingSlowdown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
-            var bullet = new EnemyBullet(this.x, this.y, this.type);
-            enemyBullets.push(bullet);
-            this.firingCooldown = Math.random() * 10 - 5;
+        if (this.type != 1) {
+            if (this.firingCooldown * this.firingSlowdown < ENEMY_FIRING_COOLDOWN_BASE[this.type]) this.firingCooldown++;
+            if (this.firingCooldown * this.firingSlowdown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
+                var bullet = new EnemyBullet(this.x, this.y, this.type);
+                enemyBullets.push(bullet);
+                this.firingCooldown = Math.random() * 10 - 5;
+            }
         }
     }
 
@@ -964,6 +973,7 @@ function debug() {
 function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(400, 160, 0, 0, 1));
     enemies.push(new Enemy(640, 160, 0, 0, 1));
+    enemies.push(new Enemy(740, 160, 2, 0, 1));
 
     enemies.push(new Enemy(200, 150, 0, 0, 2));
     enemies.push(new Enemy(200, 426, 0, 0, 2));
