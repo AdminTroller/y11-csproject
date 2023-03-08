@@ -37,7 +37,7 @@ var playerReload = [40];
 
 var coins = 0;
 var level = 0;
-var room = 0;
+var room = 10;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -56,6 +56,8 @@ var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
+
+var gunsDropped = []; // [level, room, x, y, type]
 
 var saveRooms = [[0, 9]];
 
@@ -152,6 +154,8 @@ function preload() { // Load sprites
 
     CHEST1_OPENED = loadImage(PATH + "Items/Chests/chest1_opened.png");
     CHESTS_OPENED = [CHEST1_OPENED];
+
+    GUN_SPRITES = [loadImage(PATH + "Items/Guns/machine.png"),loadImage(PATH + "Items/Guns/machine.png")];
 
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
@@ -389,7 +393,8 @@ function item() {
         }
     }
 
-    chest()
+    chest();
+    guns();
 
 }
 
@@ -400,11 +405,30 @@ function chest() {
             if (!chestRooms[i][3]) drawImage(CHESTS[chestRooms[i][2]], 512, 288);
             else drawImage(CHESTS_OPENED[chestRooms[i][2]], 512, 288);
 
-            if (Math.abs(512 - playerX) < 80 && Math.abs(288 - playerY) < 80) {
+            if (Math.abs(512 - playerX) < 80 && Math.abs(288 - playerY) < 80 && !chestRooms[i][3]) {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
                 if (keyIsDown(32)) {
                     chestRooms[i][3] = true;
+                    gunsDropped.push([level, room, 512, 200, 1]);
+                }
+            }
+        }
+    }
+}
+
+function guns() {
+    for (var i = 0; i < gunsDropped.length; i++) {
+        if (gunsDropped[i][0] == level && gunsDropped[i][1] == room) {
+
+            drawImage(GUN_SPRITES[gunsDropped[i][4]], gunsDropped[i][2], gunsDropped[i][3]);
+
+            if (Math.abs(gunsDropped[i][2] - playerX) < 32 && Math.abs(gunsDropped[i][3] - playerY) < 32) {
+                drawImage(SPACE_INDICATOR, playerX, playerY - 40);
+
+                if (keyIsDown(32)) {
+                    gunsDropped.splice(i, 1);
+                    i--;
                 }
             }
         }
