@@ -24,16 +24,16 @@ var changeRoomDir;
 var allowChangeRoomFade = false;
 var changeRoomFadeTimer = 0;
 
-var playerGun = 0;
 var playerGuns = [0, -1];
+var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = 12;
-var playerGunCooldowns = [20];
+var playerGunCooldowns = [20, 10];
 var playerFiringCooldown = playerGunCooldowns[0];
-var gunAmmo = [10];
-var playerAmmo = [gunAmmo[0]];
-var gunReload = [40];
-var playerReload = [40];
+var gunAmmo = [10, 15];
+var playerAmmo = [gunAmmo[0], gunAmmo[1]];
+var gunReload = [40, 60];
+var playerReload = [gunReload[0], gunReload[1]];
 
 var coins = 0;
 var level = 0;
@@ -346,19 +346,19 @@ function uiHearts() {
 
 function uiAmmo() {
     drawImage(AMMO_BOX, 70, 548);
-    drawImage(NUMBERS[Math.floor(playerAmmo/10)], 14, 548);
-    drawImage(NUMBERS[playerAmmo % 10], 32, 548);
+    drawImage(NUMBERS[Math.floor(playerAmmo[playerGuns[playerGun]]/10)], 14, 548);
+    drawImage(NUMBERS[playerAmmo[playerGuns[playerGun]] % 10], 32, 548);
     drawImage(NUMBERS[10], 50, 548);
-    drawImage(NUMBERS[Math.floor(gunAmmo[playerGun]/10)], 66, 548);
-    drawImage(NUMBERS[gunAmmo[playerGun] % 10], 84, 548);
-    if (playerAmmo[playerGun] > 0) drawImage(AMMO_SYMBOL, 118, 548);
+    drawImage(NUMBERS[Math.floor(gunAmmo[playerGuns[playerGun]]/10)], 66, 548);
+    drawImage(NUMBERS[gunAmmo[playerGuns[playerGun]] % 10], 84, 548);
+    if (playerAmmo[playerGuns[playerGun]] > 0) drawImage(AMMO_SYMBOL, 118, 548);
     else {
         drawImage(AMMO_SYMBOL_EMPTY, 118, 548);
         drawImage(AMMO_SYMBOL_EMPTY, playerX, playerY - 48);
     }
 
-    if (playerReload[playerGun] < gunReload[playerGun]) {
-        drawImageSmooth(RELOAD_BOX, 70 - (playerReload[playerGun] * (140/gunReload[playerGun])), 548);
+    if (playerReload[playerGuns[playerGun]] < gunReload[playerGuns[playerGun]]) {
+        drawImageSmooth(RELOAD_BOX, 70 - (playerReload[playerGuns[playerGun]] * (140/gunReload[playerGuns[playerGun]])), 548);
     }
 }
 
@@ -429,6 +429,7 @@ function guns() {
                 if (keyIsDown(32)) {
                     gunsDropped.splice(i, 1);
                     i--;
+                    playerGuns[0] = 1;
                 }
             }
         }
@@ -492,13 +493,13 @@ function playerMovement() {
 
 function playerShooting() {
     if (!paused) {
-        if (playerFiringCooldown < playerGunCooldowns[playerGun]) playerFiringCooldown++;
+        if (playerFiringCooldown < playerGunCooldowns[playerGuns[playerGun]]) playerFiringCooldown++;
         if (mouseIsPressed && (playerInRoom || level_clear[level][room])) {
-            if (playerAmmo[playerGun] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGun] && playerReload[playerGun] >= gunReload[playerGun]) {
+            if (playerAmmo[playerGuns[playerGun]] > 0 && playerFiringCooldown >= playerGunCooldowns[playerGuns[playerGun]] && playerReload[playerGuns[playerGun]] >= gunReload[playerGuns[playerGun]]) {
                 var bullet = new PlayerBullet();
                 playerBullets.push(bullet);
                 playerFiringCooldown = 0;
-                playerAmmo[playerGun] -= 1;
+                playerAmmo[playerGuns[playerGun]] -= 1;
             }
         }
     }
@@ -534,12 +535,12 @@ function playerShooting() {
 }
 
 function reload() {
-    if (playerReload[playerGun] < gunReload[playerGun]) playerReload[playerGun]++;
-    if (playerReload[playerGun] == gunReload[playerGun] - 1) playerAmmo[playerGun] = gunAmmo[playerGun];
+    if (playerReload[playerGuns[playerGun]] < gunReload[playerGuns[playerGun]]) playerReload[playerGuns[playerGun]]++;
+    if (playerReload[playerGuns[playerGun]] == gunReload[playerGuns[playerGun]] - 1) playerAmmo[playerGuns[playerGun]] = gunAmmo[playerGuns[playerGun]];
 
     if (keyIsDown(82)) { // R is pressed
-        if (playerReload[playerGun] >= gunReload[playerGun] && playerAmmo[playerGun] < gunAmmo[playerGun]) {
-            playerReload[playerGun] = 0;
+        if (playerReload[playerGuns[playerGun]] >= gunReload[playerGuns[playerGun]] && playerAmmo[playerGuns[playerGun]] < gunAmmo[playerGuns[playerGun]]) {
+            playerReload[playerGuns[playerGun]] = 0;
         }
     }
 }
