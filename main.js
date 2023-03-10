@@ -30,10 +30,11 @@ var playerBullets = [];
 const PLAYER_BULLET_SPEED = 12;
 var playerGunCooldowns = [20, 10];
 var playerFiringCooldown = playerGunCooldowns[0];
-var gunAmmo = [10, 15];
+var gunAmmo = [10, 25];
 var playerAmmo = [gunAmmo[0], gunAmmo[1]];
 var gunReload = [40, 60];
 var playerReload = [gunReload[0], gunReload[1]];
+var gunDamage = [1, 0.75];
 
 var coins = 0;
 var level = 0;
@@ -82,7 +83,7 @@ function preload() { // Load sprites
 
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
-    PLAYER_BULLET = loadImage(PATH + "Player/bullet.png");
+    PLAYER_BULLETS = [loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet1.png")];
 
     HEART_BOX = loadImage(PATH + "UI/heart_box.png");
     FULL_HEART = loadImage(PATH + "UI/full_heart.png");
@@ -427,9 +428,14 @@ function guns() {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
                 if (keyIsDown(32)) {
+                    if (playerGuns[1] == -1) {
+                        playerGuns[1] = gunsDropped[i][4];
+                        gunSwitchReal();
+                    }
+                    else playerGuns[playerGun] = gunsDropped[i][4];
+
                     gunsDropped.splice(i, 1);
                     i--;
-                    playerGuns[0] = 1;
                 }
             }
         }
@@ -445,6 +451,7 @@ function player() {
                 playerHurt();
                 playerMoveEdge();
                 playerSave();
+                gunSwitch();
             }
             playerShooting();
         }
@@ -543,6 +550,18 @@ function reload() {
             playerReload[playerGuns[playerGun]] = 0;
         }
     }
+}
+
+var gunSwitchTemp = true;
+function gunSwitch() {
+    if (keyIsDown(16) && playerGuns[1] != -1 && gunSwitchTemp) gunSwitchReal();
+    if (!keyIsDown(16)) gunSwitchTemp = true;
+}
+
+function gunSwitchReal() {
+    playerReload[playerGuns[playerGun]] = gunReload[playerGuns[playerGun]];
+    playerGun = 1 - playerGun;
+    gunSwitchTemp = false;
 }
 
 function playerHurt() {
@@ -744,6 +763,7 @@ class PlayerBullet {
     constructor() {
         this.x = playerX;
         this.y = playerY;
+        this.type = playerGuns[playerGun];
 
         var deltaX = mouseX - this.x;
         var deltaY = mouseY - this.y;
@@ -765,7 +785,7 @@ class PlayerBullet {
     }
 
     draw() {
-        drawImageSmooth(PLAYER_BULLET, this.x, this.y);
+        drawImageSmooth(PLAYER_BULLETS[this.type], this.x, this.y);
     }
    
 }
@@ -900,7 +920,7 @@ class Enemy {
         for (var i = 0; i < playerBullets.length; i++) { // Check bullet collision
             var bullet = playerBullets[i];
             if (Math.abs(bullet.x - this.x) <= 20 && Math.abs(bullet.y - this.y) <= 24) {
-                this.health -= 1;
+                this.health -= gunDamage[bullet.type];
                 this.hurtTime = 0;
                 playerBullets.splice(i, 1);
                 break;
