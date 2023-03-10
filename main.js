@@ -38,7 +38,7 @@ var gunDamage = [1, 0.85];
 
 var coins = 0;
 var level = 0;
-var room = 10;
+var room = 0;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -170,6 +170,8 @@ function preload() { // Load sprites
     PATH = "Audio/";
     OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
     OVERWORLD.setVolume(volume/100);
+    CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
+    CREDITS.setVolume(volume/100);
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -283,6 +285,7 @@ function menu() {
     }
     volume = Math.round((volumeX/3) + 50);
     OVERWORLD.setVolume(volume/100);
+    CREDITS.setVolume(volume/100);
     drawImage(VOLUME_SLIDER, 512, 386);
     drawImageSmooth(VOLUME_KNOB, volumeX + 512, 386);
     textSize(32);
