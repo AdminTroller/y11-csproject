@@ -34,7 +34,7 @@ var gunAmmo = [10, 25];
 var playerAmmo = [gunAmmo[0], gunAmmo[1]];
 var gunReload = [40, 60];
 var playerReload = [gunReload[0], gunReload[1]];
-var gunDamage = [1, 0.75];
+var gunDamage = [1, 0.85];
 
 var coins = 0;
 var level = 0;
@@ -112,6 +112,9 @@ function preload() { // Load sprites
     VOLUME_KNOB = loadImage(PATH + "UI/volume_knob.png");
     VOLUME_SLIDER = loadImage(PATH + "UI/volume_slider.png");
 
+    GUN_BOX1 = loadImage(PATH + "UI/gun_box1.png");
+    GUN_BOX2 = loadImage(PATH + "UI/gun_box2.png");
+
     ENEMY0_IDLE = loadImage(PATH + "Enemy/1/enemy0_idle.png");
     ENEMY0_WALK1 = loadImage(PATH + "Enemy/1/enemy0_walk1.png");
     ENEMY0_WALK2 = loadImage(PATH + "Enemy/1/enemy0_walk2.png");
@@ -156,7 +159,7 @@ function preload() { // Load sprites
     CHEST1_OPENED = loadImage(PATH + "Items/Chests/chest1_opened.png");
     CHESTS_OPENED = [CHEST1_OPENED];
 
-    GUN_SPRITES = [loadImage(PATH + "Items/Guns/machine.png"),loadImage(PATH + "Items/Guns/machine.png")];
+    GUN_SPRITES = [loadImage(PATH + "Items/Guns/pistol.png"),loadImage(PATH + "Items/Guns/machine.png")];
 
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
@@ -329,6 +332,8 @@ function ui() {
     uiHearts();
     uiAmmo();
     uiCoins();
+    uiGuns();
+
     if (!paused) drawCrosshair();
 }
 
@@ -370,6 +375,25 @@ function uiCoins() {
     drawImage(NUMBERS[Math.floor(coins/100)], 908, 28);
     drawImage(NUMBERS[Math.floor(coins/10)%10], 926, 28);
     drawImage(NUMBERS[coins%10], 944, 28);
+}
+
+function uiGuns() {
+    if (playerGuns[1] == -1) {
+        drawImage(GUN_BOX1, 972, 548);
+        drawImage(GUN_SPRITES[playerGuns[0]], 972, 548);
+    }
+    else {
+        if (playerGun == 0) {
+            drawImage(GUN_BOX2, 972, 548);
+            drawImage(GUN_BOX1, 968, 544);
+            drawImage(GUN_SPRITES[playerGuns[0]], 968, 544);
+        }
+        else {
+            drawImage(GUN_BOX1, 972, 548);
+            drawImage(GUN_BOX2, 968, 544);
+            drawImage(GUN_SPRITES[playerGuns[1]], 968, 544);
+        }
+    }
 }
 
 function fade() {
