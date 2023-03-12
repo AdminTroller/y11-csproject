@@ -168,10 +168,13 @@ function preload() { // Load sprites
     SAVE_POINT = loadImage(PATH + "Items/save_point.png");
     
     PATH = "Audio/";
-    OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
-    OVERWORLD.setVolume(volume/100);
-    CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
-    CREDITS.setVolume(volume/100);
+    MUSIC_OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
+    MUSIC_OVERWORLD.setVolume(volume/100);
+    MUSIC_CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
+    MUSIC_CREDITS.setVolume(volume/100);
+
+    SFX_DEATH = loadSound(PATH + 'SFX/death.mp3');
+    SFX_DEATH.setVolume(volume/100);
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -284,8 +287,8 @@ function menu() {
         localStorage.setItem("volumeX", volumeX);
     }
     volume = Math.round((volumeX/3) + 50);
-    OVERWORLD.setVolume(volume/100);
-    CREDITS.setVolume(volume/100);
+    MUSIC_OVERWORLD.setVolume(volume/100);
+    MUSIC_CREDITS.setVolume(volume/100);
     drawImage(VOLUME_SLIDER, 512, 386);
     drawImageSmooth(VOLUME_KNOB, volumeX + 512, 386);
     textSize(32);
@@ -307,7 +310,7 @@ function menu() {
 function mouseClicked() {
     if (state == "click") {
         state = "menu";
-        OVERWORLD.loop();
+        MUSIC_OVERWORLD.loop();
     }
     console.log(mouseX, mouseY);
 }
@@ -633,7 +636,9 @@ function playerSave() {
 
 function playerDie() {
     playerDead = true;
-    console.log("you died");
+    MUSIC_OVERWORLD.stop();
+    SFX_DEATH.setVolume(volume/100);
+    SFX_DEATH.play();
 }
 
 function playerDraw() {
