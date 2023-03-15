@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "playing"; // Game state. click, menu, playing
+var state = "click"; // Game state. click, menu, playing
 
 var volume = 0;
 var volumeX = 0;
@@ -38,7 +38,7 @@ var gunDamage = [1, 0.85];
 
 var coins = 0;
 var level = 0;
-var room = 11;
+var room = 0;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -180,6 +180,9 @@ function preload() { // Load sprites
     MUSIC_CREDITS.setVolume(volume/100);
 
     SFX_DEATH = loadSound(PATH + 'SFX/death.mp3');
+    SFX_HIT = loadSound(PATH + 'SFX/hit.mp3');
+    SFX_HURT = loadSound(PATH + 'SFX/hurt.mp3');
+    SFX_RELOAD = loadSound(PATH + 'SFX/reload.mp3');
     SFX_SHOOT = loadSound(PATH + 'SFX/shoot.mp3');
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
@@ -640,6 +643,8 @@ function reload() {
     if (keyIsDown(82)) { // R is pressed
         if (playerReload[playerGuns[playerGun]] >= gunReload[playerGuns[playerGun]] && playerAmmo[playerGuns[playerGun]] < gunAmmo[playerGuns[playerGun]]) {
             playerReload[playerGuns[playerGun]] = 0;
+            SFX_RELOAD.setVolume(volume/100);
+            SFX_RELOAD.play();
         }
     }
 }
@@ -665,6 +670,10 @@ function playerHurt() {
                 playerHealth -= 1;
                 playerHurtTime = 0;
                 if (playerHealth <= 0) playerDie();
+                else {
+                    SFX_HURT.setVolume(volume/100);
+                    SFX_HURT.play();
+                }
             }
             enemyBullets.splice(i, 1);
             break;
@@ -680,6 +689,10 @@ function playerHurt() {
                     playerHealth -= 1;
                     playerHurtTime = 0;
                     if (playerHealth <= 0) playerDie();
+                    else {
+                        SFX_HURT.setVolume(volume/100);
+                        SFX_HURT.play();
+                    }
                     break;
                 }
             }
@@ -1035,6 +1048,8 @@ class Enemy {
                 this.health -= gunDamage[bullet.type];
                 this.hurtTime = 0;
                 playerBullets.splice(i, 1);
+                SFX_HIT.setVolume(volume/100);
+                SFX_HIT.play();
                 break;
             }
         }
