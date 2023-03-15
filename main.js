@@ -55,7 +55,7 @@ var enemyFiringCooldown = 0;
 
 var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
 
-var shopRooms = [[0, 11]]; // [level, room]
+var shopRooms = [[0, 11, 0, false, -1, -1, -1]]; // [level, room, type, visited, item1, item2, item3]
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
@@ -453,6 +453,7 @@ function chest() {
     }
 }
 
+var gunsDroppedTemp = false;
 function guns() {
     for (var i = 0; i < gunsDropped.length; i++) {
         if (gunsDropped[i][0] == level && gunsDropped[i][1] == room) {
@@ -462,15 +463,21 @@ function guns() {
             if (Math.abs(gunsDropped[i][2] - playerX) < 32 && Math.abs(gunsDropped[i][3] - playerY) < 32) {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
-                if (keyIsDown(32)) {
+                if (keyIsDown(32) && gunsDroppedTemp) { // pickup gun on ground
                     if (playerGuns[1] == -1) {
                         playerGuns[1] = gunsDropped[i][4];
                         gunSwitchReal();
                     }
-                    else playerGuns[playerGun] = gunsDropped[i][4];
-
+                    else {
+                        gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
+                        playerGuns[playerGun] = gunsDropped[i][4];
+                    }
                     gunsDropped.splice(i, 1);
                     i--;
+                    gunsDroppedTemp = false;
+                }
+                if (!keyIsDown(32)) {
+                    gunsDroppedTemp = true;
                 }
             }
         }
@@ -481,6 +488,31 @@ function shop() {
     for (var i = 0; i < shopRooms.length; i++) {
         if (shopRooms[i][0] == level && shopRooms[i][1] == room) {
             drawImage(SHOP_SPRITE, 512, 288);
+            var itemX = [422, 512, 602];
+
+            // Draw shop items
+            if (shopRooms[i][4] != -1) drawImage(GUN_SPRITES[shopRooms[i][4]], itemX[0], 320);
+            if (shopRooms[i][5] != -1) drawImage(GUN_SPRITES[shopRooms[i][5]], itemX[1], 320);
+            if (shopRooms[i][6] != -1) drawImage(GUN_SPRITES[shopRooms[i][6]], itemX[2], 320);
+
+            
+            if (playerY < 376 + 8 && playerY > 376 - 16) { // Check player Y position
+                for (var j = 0; j < 3; j++) { // for each shop item
+                    if (shopRooms[i][j+4] != -1 && playerX > itemX[j] - 40 && playerX < itemX[j] + 40) {
+                        drawImage(SPACE_INDICATOR, playerX, playerY + 40);
+                        if (keyIsDown(32)) { // Space pressed
+                            if (playerGuns[1] == -1) {
+                                playerGuns[1] = shopRooms[i][j+4];
+                                gunSwitchReal();
+                            } else {
+                                gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
+                                playerGuns[playerGun] = shopRooms[i][j+4];
+                            }
+                            shopRooms[i][j+4] = -1;
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -699,6 +731,16 @@ function changeRoomFade() {
         if (changeRoomDir == 1) playerY = 12;
         if (changeRoomDir == 2) playerX = CANVAS_WIDTH - 12;
         if (changeRoomDir == 3) playerX = 12;
+
+        for (var i = 0; i < shopRooms.length; i++) { // Assign items to shop
+            if (!shopRooms[i][3] && shopRooms[i][0] == level && shopRooms[i][1] == room) {
+                for (var j = 4; j <= 6; j++) {
+                    shopRooms[i][j] = Math.floor(Math.random()*gunDamage.length);
+                }
+                shopRooms[i][3] = true;
+            }
+        }
+    
     }
     if (fadeOpacity < 0) {
         fadeOut = false;
