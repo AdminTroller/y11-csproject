@@ -313,6 +313,9 @@ function menu() {
     if (keyIsDown(46)) { // TEMPORARY DEBUG DELETE DATA
         level = 0;
         room = 0;
+        coins = 0;
+        playerGuns = [0, -1];
+        currentSave = -1;
         saveGame();
     }
     textSize(12);
