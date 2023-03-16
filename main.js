@@ -21,7 +21,7 @@ var playerDead = false;
 var playerInRoom = true;
 var changeRoomDir;
 
-const PLAYER_WALK_DELAY = 4;
+var playerWalkDelay = 4;
 var playerWalkTimer = 0;
 var playerWalkAnimation = 0;
 var playerDir = 0;
@@ -113,6 +113,7 @@ function preload() { // Load sprites
 
     AMMO_BOX = loadImage(PATH + "UI/ammo_box.png");
     RELOAD_BOX = loadImage(PATH + "UI/reload_box.png");
+    SWAP_GUN = loadImage(PATH + "UI/swap_gun.png");
     AMMO_SYMBOL = loadImage(PATH + "UI/ammo_symbol.png");
     AMMO_SYMBOL_EMPTY = loadImage(PATH + "UI/ammo_symbol_empty.png");
     ZERO = loadImage(PATH + "UI/0.png");
@@ -459,6 +460,7 @@ function uiGuns() {
             drawImage(GUN_BOX2, 968, 544);
             drawImage(GUN_SPRITES[playerGuns[1]], 968, 544);
         }
+        drawImage(SWAP_GUN, 892, 546);
     }
 }
 
@@ -656,8 +658,14 @@ function playerMovement() {
     if (okX) playerX += dx;
     if (okY) playerY += dy;
 
-    if (level_clear[level][room]) playerSpeed = 6;
-    else playerSpeed = 4;
+    if (level_clear[level][room]) {
+        playerSpeed = 6;
+        playerWalkDelay = 4;
+    }
+    else {
+        playerSpeed = 4;
+        playerWalkDelay = 6;
+    }
 
     // Walk Animation Help
     if (dx == 0 && dy == 0) playerMoving = false;
@@ -831,7 +839,7 @@ function playerDraw() {
         playerWalkAnimation = 3;
     }
 
-    if (playerWalkTimer >= PLAYER_WALK_DELAY) {
+    if (playerWalkTimer >= playerWalkDelay) {
         playerWalkTimer = 0;
         playerWalkAnimation++
         if (playerWalkAnimation >= 8) playerWalkAnimation = 0;
@@ -1328,6 +1336,7 @@ class Coin {
 function debug() {
     textSize(32);
     if (keyIsDown(72)) coins = 900; // Debug 900 coins
+    if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
 
 function enemySpawn() { // (x, y, type, level, room)
