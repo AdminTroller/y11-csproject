@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "playing"; // Game state. click, menu, playing
+var state = "click"; // Game state. click, menu, playing
 
 var volume = 0;
 var volumeX = 0;
@@ -38,7 +38,7 @@ var gunDamage = [1, 0.85];
 
 var coins = 0;
 var level = 0;
-var room = 0;
+var room = 9;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -240,6 +240,8 @@ function menu() {
         if (mouseIsPressed) {
             level = 0;
             room = 0;
+            coins = 0;
+            currentSave = -1;
             state = "playing";
         }
     }
@@ -255,6 +257,8 @@ function menu() {
         if (mouseIsPressed) {
             level = parseInt(localStorage.getItem("level"));
             room = parseInt(localStorage.getItem("room"));
+            coins = parseInt(localStorage.getItem("coins"));
+            currentSave = parseInt(localStorage.getItem("currentSave"));
             state = "playing";
         }
     }
@@ -327,7 +331,9 @@ function mouseClicked() {
 function saveGame(i) {
     localStorage.setItem("level", level);
     localStorage.setItem("room", room);
+    localStorage.setItem("coins", coins);
     currentSave = i;
+    localStorage.setItem("currentSave", currentSave);
 }
 
 function drawImage(sprite, x, y) {
@@ -723,7 +729,7 @@ function playerSave() {
 
             }
 
-            if (playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) {
+            if (currentSave != i && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) {
                 drawImage(SPACE_INDICATOR, playerX, playerY+40);
 
                 if (keyIsDown(32)) saveGame(i);
