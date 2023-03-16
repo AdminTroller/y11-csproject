@@ -30,17 +30,18 @@ var playerMoving = false;
 var allowChangeRoomFade = false;
 var changeRoomFadeTimer = 0;
 
+// pistol, machine, gatling, shotgun, sniper
 var playerGuns = [0, -1];
 var playerGun = 0;
 var playerBullets = [];
-const PLAYER_BULLET_SPEED = 12;
-var playerGunCooldowns = [20, 10];
+const PLAYER_BULLET_SPEED = [12, 14, 9, 9, 20];
+var playerGunCooldowns = [20, 10, 6, 10, 10];
 var playerFiringCooldown = playerGunCooldowns[0];
-var gunAmmo = [10, 25];
-var playerAmmo = [gunAmmo[0], gunAmmo[1]];
-var gunReload = [40, 60];
-var playerReload = [gunReload[0], gunReload[1]];
-var gunDamage = [1, 0.85];
+var gunAmmo = [10, 25, 45, 25, 25];
+var playerAmmo = [gunAmmo[0], gunAmmo[1], gunAmmo[2], gunAmmo[3], gunAmmo[4]];
+var gunReload = [40, 60, 70, 60, 60];
+var playerReload = [gunReload[0], gunReload[1], gunReload[2], gunReload[3], gunReload[4]];
+var gunDamage = [1, 0.85, 0.5, 1, 1];
 
 var coins = 0;
 var level = 0;
@@ -62,7 +63,7 @@ var enemyFiringCooldown = 0;
 var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
 
 var shopRooms = [[0, 11, 0, false, -1, -1, -1]]; // [level, room, type, visited, item1, item2, item3]
-var shopPrices = [3, 8];
+var shopPrices = [0, 8, 14, 12, 13];
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
@@ -101,7 +102,7 @@ function preload() { // Load sprites
 
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
-    PLAYER_BULLETS = [loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet1.png")];
+    PLAYER_BULLETS = [loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet1.png"),loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet0.png")];
 
     HEART_BOX = loadImage(PATH + "UI/heart_box.png");
     FULL_HEART = loadImage(PATH + "UI/full_heart.png");
@@ -180,7 +181,7 @@ function preload() { // Load sprites
 
     SHOP_SPRITE = loadImage(PATH + "Items/shop.png");
 
-    GUN_SPRITES = [loadImage(PATH + "Items/Guns/pistol.png"),loadImage(PATH + "Items/Guns/machine.png")];
+    GUN_SPRITES = [loadImage(PATH + "Items/Guns/pistol.png"),loadImage(PATH + "Items/Guns/machine.png"),loadImage(PATH + "Items/Guns/gatling.png"),loadImage(PATH + "Items/Guns/shotgun.png"),loadImage(PATH + "Items/Guns/sniper.png")];
 
     MENU_BUTTON = loadImage(PATH + "UI/menu_button.png");
     MENU_BUTTON_HOVER = loadImage(PATH + "UI/menu_button_hover.png");
@@ -893,7 +894,7 @@ function changeRoomFade() {
         for (var i = 0; i < shopRooms.length; i++) { // Assign items to shop
             if (!shopRooms[i][3] && shopRooms[i][0] == level && shopRooms[i][1] == room) {
                 for (var j = 4; j <= 6; j++) {
-                    shopRooms[i][j] = Math.floor(Math.random()*(gunDamage.length-1))+1;
+                    shopRooms[i][j] = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
                 }
                 shopRooms[i][3] = true;
             }
@@ -1042,7 +1043,7 @@ class PlayerBullet {
         var deltaX = mouseX - this.x;
         var deltaY = mouseY - this.y;
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
-        var divider = distance / PLAYER_BULLET_SPEED;
+        var divider = distance / PLAYER_BULLET_SPEED[this.type];
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
