@@ -48,17 +48,18 @@ var coins = 0;
 var level = 0;
 var room = 14;
 
+// Pistol, Kamikaze, Machine, Shotgun
 var enemies = [];
-const ENEMY_SPEED = [1.5, 3.5, 1.5];
-const ENEMY_HEALTH = [4, 1, 6];
-const ENEMY_HURT_TIME_BASE = [30, 20, 30];
-const ENEMY_SPREAD_DISTANCE = [40, 0, 40];
-const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0, 100];
-const ENEMY_COIN = [0, 0, 1];
+const ENEMY_SPEED = [1.5, 3.5, 1.5, 1];
+const ENEMY_HEALTH = [4, 1, 6, 5];
+const ENEMY_HURT_TIME_BASE = [30, 20, 30, 20];
+const ENEMY_SPREAD_DISTANCE = [40, 0, 40, 40];
+const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0, 100, 60];
+const ENEMY_COIN = [0, 0, 1, 1];
 
 var enemyBullets = [];
-const ENEMY_BULLET_SPEED = [4.5, 10, 4.5];
-const ENEMY_FIRING_COOLDOWN_BASE = [60, 0, 20];
+const ENEMY_BULLET_SPEED = [4.5, 10, 4.5, 4];
+const ENEMY_FIRING_COOLDOWN_BASE = [60, 0, 20, 80];
 var enemyFiringCooldown = 0;
 
 var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
@@ -152,14 +153,19 @@ function preload() { // Load sprites
     ENEMY2_WALK2 = loadImage(PATH + "Enemy/1/enemy2_walk2.png");
     ENEMY2_HURT = loadImage(PATH + "Enemy/1/enemy2_hurt.png");
 
-    ENEMY_SPRITES = [[ENEMY0_IDLE,ENEMY0_WALK1,ENEMY0_WALK2,ENEMY0_HURT], [ENEMY1_IDLE,ENEMY1_WALK1,ENEMY1_WALK2,ENEMY1_HURT], [ENEMY2_IDLE,ENEMY2_WALK1,ENEMY2_WALK2,ENEMY2_HURT]];
-    ENEMY_HURT_SPRITES = [ENEMY0_HURT, ENEMY1_HURT];
-    C4 = loadImage(PATH + "Enemy/3/c4.png");
+    ENEMY3_IDLE = loadImage(PATH + "Enemy/1/enemy3_idle.png");
+    ENEMY3_WALK1 = loadImage(PATH + "Enemy/1/enemy3_walk1.png");
+    ENEMY3_WALK2 = loadImage(PATH + "Enemy/1/enemy3_walk2.png");
+    ENEMY3_HURT = loadImage(PATH + "Enemy/1/enemy3_hurt.png");
+
+    ENEMY_SPRITES = [[ENEMY0_IDLE,ENEMY0_WALK1,ENEMY0_WALK2,ENEMY0_HURT], [ENEMY1_IDLE,ENEMY1_WALK1,ENEMY1_WALK2,ENEMY1_HURT], [ENEMY2_IDLE,ENEMY2_WALK1,ENEMY2_WALK2,ENEMY2_HURT], [ENEMY3_IDLE,ENEMY3_WALK1,ENEMY3_WALK2,ENEMY3_HURT]];
+    ENEMY_C4 = loadImage(PATH + "Enemy/2/c4.png");
 
     ENEMY0_BULLET = loadImage(PATH + "Enemy/bullet0.png");
     ENEMY1_BULLET = loadImage(PATH + "Enemy/bullet1.png");
     ENEMY2_BULLET = loadImage(PATH + "Enemy/bullet2.png");
-    ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET, ENEMY2_BULLET];
+    ENEMY3_BULLET = loadImage(PATH + "Enemy/bullet0.png");
+    ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET, ENEMY2_BULLET, ENEMY3_BULLET];
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
@@ -1456,6 +1462,8 @@ function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(740, 288, 1, 0, 13));
     enemies.push(new Enemy(100, 100, 0, 0, 13));
     enemies.push(new Enemy(760, 100, 0, 0, 13));
+
+    enemies.push(new Enemy(500, 288, 3, 0, 14));
 
 }
 
