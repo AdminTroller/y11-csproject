@@ -469,7 +469,7 @@ function guns() {
             if (Math.abs(gunsDropped[i][2] - playerX) < 32 && Math.abs(gunsDropped[i][3] - playerY) < 32) {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
-                if (keyIsDown(32) && gunsDroppedTemp) { // pickup gun on ground
+                if (keyIsDown(32) && gunsDroppedTemp && playerGuns[0] != gunsDropped[i][4] && playerGuns[1] != gunsDropped[i][4]) { // pickup gun on ground
                     if (playerGuns[1] == -1) {
                         playerGuns[1] = gunsDropped[i][4];
                         gunSwitchReal();
@@ -514,7 +514,7 @@ function shop() {
                             drawImage(NUMBERS[shopPrices[shopRooms[i][j+4]] % 10], itemX[j]+9, 260);
                         }
 
-                        if (keyIsDown(32) && shopBuyTemp && coins >= shopPrices[shopRooms[i][j+4]]) { // Space pressed (buy item)
+                        if (keyIsDown(32) && shopBuyTemp && coins >= shopPrices[shopRooms[i][j+4]] && playerGuns[0] != shopRooms[i][j+4] && playerGuns[1] != shopRooms[i][j+4]) { // Space pressed (buy item)
                             if (playerGuns[1] == -1) {
                                 playerGuns[1] = shopRooms[i][j+4];
                                 gunSwitchReal();
@@ -1223,6 +1223,7 @@ class Coin {
 
 function debug() {
     textSize(32);
+    if (keyIsDown(72)) coins = 900; // Debug 900 coins
 }
 
 function enemySpawn() { // (x, y, type, level, room)
