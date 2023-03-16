@@ -207,6 +207,7 @@ function preload() { // Load sprites
     SFX_BUY = loadSound(PATH + 'SFX/buy.mp3');
     SFX_FAIL = loadSound(PATH + 'SFX/fail.mp3');
     SFX_COIN = loadSound(PATH + 'SFX/coin.mp3');
+    SFX_SWAP = loadSound(PATH + 'SFX/swap.mp3');
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -747,6 +748,8 @@ function gunSwitchReal() {
     playerReload[playerGuns[playerGun]] = gunReload[playerGuns[playerGun]];
     playerGun = 1 - playerGun;
     gunSwitchTemp = false;
+    SFX_SWAP.setVolume(volume/100);
+    SFX_SWAP.play();
 }
 
 function playerHurt() {
