@@ -46,7 +46,7 @@ var gunDamage = [1, 0.85, 0.5, 0.7, 5];
 
 var coins = 0;
 var level = 0;
-var room = 6;
+var room = 8;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -886,22 +886,24 @@ function playerDie() {
 }
 
 function playerDraw() {
-    // if (playerHurtTime >= PLAYER_HURT_TIME_BASE) drawImageSmooth(PLAYER, playerX, playerY);
-    // else drawImageSmooth(PLAYER_HURT, playerX, playerY);
-    if (playerMoving) {
-        drawImageSmooth(PLAYER_SPRITES[playerDir][playerWalkAnimation], playerX, playerY);
-        playerWalkTimer++;
-    }
-    else {
-        drawImage(PLAYER_SPRITES[1][3], playerX, playerY);
-        playerWalkAnimation = 3;
-    }
 
-    if (playerWalkTimer >= playerWalkDelay) {
-        playerWalkTimer = 0;
-        playerWalkAnimation++
-        if (playerWalkAnimation >= 8) playerWalkAnimation = 0;
+    if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
+        if (playerMoving) {
+            drawImageSmooth(PLAYER_SPRITES[playerDir][playerWalkAnimation], playerX, playerY);
+            playerWalkTimer++;
+        }
+        else {
+            drawImage(PLAYER_SPRITES[1][3], playerX, playerY);
+            playerWalkAnimation = 3;
+        }
+    
+        if (playerWalkTimer >= playerWalkDelay) {
+            playerWalkTimer = 0;
+            playerWalkAnimation++
+            if (playerWalkAnimation >= 8) playerWalkAnimation = 0;
+        }
     }
+    else drawImageSmooth(PLAYER_HURT, playerX, playerY);
 }
 
 function playerMoveEdge() {
