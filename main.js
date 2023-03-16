@@ -46,7 +46,7 @@ var gunDamage = [1, 0.85, 0.5, 0.7, 5];
 
 var coins = 0;
 var level = 0;
-var room = 7;
+var room = 6;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -62,6 +62,7 @@ const ENEMY_FIRING_COOLDOWN_BASE = [60, 0, 20];
 var enemyFiringCooldown = 0;
 
 var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
+var heartsDropped = [] // [level, room, x, y]
 
 var shopRooms = [[0, 11, 0, false, -1, -1]]; // [level, room, type, visited, item1, item2, item3]
 var shopPrices = [0, 8, 14, 12, 13];
@@ -210,6 +211,7 @@ function preload() { // Load sprites
     SFX_FAIL = loadSound(PATH + 'SFX/fail.mp3');
     SFX_COIN = loadSound(PATH + 'SFX/coin.mp3');
     SFX_SWAP = loadSound(PATH + 'SFX/swap.mp3');
+    SFX_HEAL = loadSound(PATH + 'SFX/heal.mp3');
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -529,10 +531,31 @@ function chest() {
 
                 if (keyIsDown(32)) {
                     chestRooms[i][3] = true;
-                    gunsDropped.push([level, room, 512, 200, 1]);
+                    var type = Math.floor(Math.random()*5);
+                    var gun = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+
+                    if (type == 0) gunsDropped.push([level, room, 512, 200, gun]);
+                    else heartsDropped.push([level, room, 512, 200]);
+                    if (playerHealth > 6) playerHealth = 6;
+
                     SFX_CHEST.setVolume(volume/100);
                     SFX_CHEST.play();
                 }
+            }
+        }
+    }
+
+    for (var i = 0; i < heartsDropped.length; i++) {
+        if (heartsDropped[i][0] == level && heartsDropped[i][1] == room) {
+            drawImage(HALF_HEART, heartsDropped[i][2], heartsDropped[i][3]);
+
+            if (playerHealth < 6 && Math.abs(playerX - heartsDropped[i][2]) < 32 && Math.abs(playerY - heartsDropped[i][3]) < 32) {
+                playerHealth += 1;
+                heartsDropped.splice(i, 1);
+                i--;
+
+                SFX_HEAL.setVolume(volume/100);
+                SFX_HEAL.play();
             }
         }
     }
@@ -1386,7 +1409,6 @@ function debug() {
 function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(400, 160, 0, 0, 1));
     enemies.push(new Enemy(640, 160, 0, 0, 1));
-    // enemies.push(new Enemy(740, 160, 2, 0, 1));
 
     enemies.push(new Enemy(200, 150, 0, 0, 2));
     enemies.push(new Enemy(200, 426, 0, 0, 2));
@@ -1411,6 +1433,10 @@ function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(600, 168, 0, 0, 6));
     enemies.push(new Enemy(900, 100, 1, 0, 6));
     enemies.push(new Enemy(124, 100, 1, 0, 6));
+
+    enemies.push(new Enemy(124, 100, 0, 0, 8));
+    enemies.push(new Enemy(900, 100, 0, 0, 8));
+    enemies.push(new Enemy(512, 200, 2, 0, 8));
 }
 
 var level1_clear = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
