@@ -894,9 +894,17 @@ function changeRoomFade() {
 
         for (var i = 0; i < shopRooms.length; i++) { // Assign items to shop
             if (!shopRooms[i][3] && shopRooms[i][0] == level && shopRooms[i][1] == room) {
-                for (var j = 4; j <= 6; j++) {
-                    shopRooms[i][j] = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
-                }
+                var left = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                shopRooms[i][4] = left;
+
+                var middle = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                while (middle == left) middle = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                shopRooms[i][5] = middle;
+
+                var right = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                while (right == left || right == middle) right = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                shopRooms[i][6] = right;
+
                 shopRooms[i][3] = true;
             }
         }
