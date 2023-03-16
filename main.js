@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "click"; // Game state. click, menu, playing
+var state = "click"; // Game state. click, menu, playing, credits
 
 var volume = 0;
 var volumeX = 0;
@@ -251,6 +251,9 @@ function draw() { // Loop
         fade();
         pause();
     }
+
+    if (state == "credits") credits();
+
     debug();
 }
 
@@ -360,6 +363,25 @@ function menu() {
     textSize(12);
     fill(0, 0, 0);
     text("press Delete to delete data (temporary debug)", 710, 556);
+
+    drawImage(BORDER, 512, 288);
+}
+
+function credits() {
+    drawImage(MENU_BACKGROUND, 512, 288);
+    textAlign(CENTER, CENTER);
+    textFont(FONT_SANS_BOLD);
+    stroke(0, 90, 0);
+    strokeWeight(4);
+    fill(0, 180, 0);
+    textSize(60);
+    text('Thanks for playing!', 512, 260);
+
+    textFont(FONT_SANS);
+    strokeWeight(0);
+    fill(60);
+    textSize(24);
+    text('Special thanks to 5iveZer0 for singing this song', 512, 540);
 
     drawImage(BORDER, 512, 288);
 }
