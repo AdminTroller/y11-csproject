@@ -443,6 +443,7 @@ function ui() {
     // Death Text
     if (playerDead) {
         cursor();
+        background(0, 0, 0, 128);
         textAlign(CENTER, CENTER);
         textFont(FONT_SANS_BOLD);
         stroke(60, 0, 0);
