@@ -63,7 +63,7 @@ var enemyFiringCooldown = 0;
 
 var chestRooms = [[0, 10, 0, false]]; // [level, room, type, opened]
 
-var shopRooms = [[0, 11, 0, false, -1, -1, -1]]; // [level, room, type, visited, item1, item2, item3]
+var shopRooms = [[0, 11, 0, false, -1, -1]]; // [level, room, type, visited, item1, item2, item3]
 var shopPrices = [0, 8, 14, 12, 13];
 
 var coinsDropped = [];
@@ -561,16 +561,16 @@ function shop() {
     for (var i = 0; i < shopRooms.length; i++) {
         if (shopRooms[i][0] == level && shopRooms[i][1] == room) {
             drawImage(SHOP_SPRITE, 512, 288);
-            var itemX = [422, 512, 602];
+            var itemX = [442, 582];
 
             // Draw shop items
             if (shopRooms[i][4] != -1) drawImage(GUN_SPRITES[shopRooms[i][4]], itemX[0], 320);
             if (shopRooms[i][5] != -1) drawImage(GUN_SPRITES[shopRooms[i][5]], itemX[1], 320);
-            if (shopRooms[i][6] != -1) drawImage(GUN_SPRITES[shopRooms[i][6]], itemX[2], 320);
+            // if (shopRooms[i][6] != -1) drawImage(GUN_SPRITES[shopRooms[i][6]], itemX[2], 320);
 
             
             if (playerY < 376 + 8 && playerY > 376 - 16) { // Check player Y position
-                for (var j = 0; j < 3; j++) { // for each shop item
+                for (var j = 0; j < 2; j++) { // for each shop item
                     if (shopRooms[i][j+4] != -1 && playerX > itemX[j] - 40 && playerX < itemX[j] + 40) {
                         drawImage(SPACE_INDICATOR, playerX, playerY + 40);
 
@@ -897,13 +897,9 @@ function changeRoomFade() {
                 var left = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
                 shopRooms[i][4] = left;
 
-                var middle = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
-                while (middle == left) middle = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
-                shopRooms[i][5] = middle;
-
                 var right = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
-                while (right == left || right == middle) right = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
-                shopRooms[i][6] = right;
+                while (right == left) right = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
+                shopRooms[i][5] = right;
 
                 shopRooms[i][3] = true;
             }
