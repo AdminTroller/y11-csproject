@@ -258,6 +258,8 @@ function menu() {
             level = parseInt(localStorage.getItem("level"));
             room = parseInt(localStorage.getItem("room"));
             coins = parseInt(localStorage.getItem("coins"));
+            playerGuns[0] = parseInt(localStorage.getItem("playerGuns0"));
+            playerGuns[1] = parseInt(localStorage.getItem("playerGuns1"));
             currentSave = parseInt(localStorage.getItem("currentSave"));
             state = "playing";
         }
@@ -332,6 +334,8 @@ function saveGame(i) {
     localStorage.setItem("level", level);
     localStorage.setItem("room", room);
     localStorage.setItem("coins", coins);
+    localStorage.setItem("playerGuns0", playerGuns[0]);
+    localStorage.setItem("playerGuns1", playerGuns[1]);
     currentSave = i;
     localStorage.setItem("currentSave", currentSave);
 }
