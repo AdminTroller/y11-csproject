@@ -202,6 +202,10 @@ function preload() { // Load sprites
     SFX_HURT = loadSound(PATH + 'SFX/hurt.mp3');
     SFX_RELOAD = loadSound(PATH + 'SFX/reload.mp3');
     SFX_SHOOT = loadSound(PATH + 'SFX/shoot.mp3');
+    SFX_CHEST = loadSound(PATH + 'SFX/chest.mp3');
+    SFX_BUY = loadSound(PATH + 'SFX/buy.mp3');
+    SFX_FAIL = loadSound(PATH + 'SFX/fail.mp3');
+    SFX_COIN = loadSound(PATH + 'SFX/coin.mp3');
 
     FONT_MONO = loadFont('Fonts/font_mono.ttf');
     FONT_SANS = loadFont('Fonts/font_sans.ttf');
@@ -499,6 +503,8 @@ function chest() {
                 if (keyIsDown(32)) {
                     chestRooms[i][3] = true;
                     gunsDropped.push([level, room, 512, 200, 1]);
+                    SFX_CHEST.setVolume(volume/100);
+                    SFX_CHEST.play();
                 }
             }
         }
@@ -515,18 +521,27 @@ function guns() {
             if (Math.abs(gunsDropped[i][2] - playerX) < 32 && Math.abs(gunsDropped[i][3] - playerY) < 32) {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
-                if (keyIsDown(32) && gunsDroppedTemp && playerGuns[0] != gunsDropped[i][4] && playerGuns[1] != gunsDropped[i][4]) { // pickup gun on ground
-                    if (playerGuns[1] == -1) {
-                        playerGuns[1] = gunsDropped[i][4];
-                        gunSwitchReal();
+                if (keyIsDown(32) && gunsDroppedTemp) { // pickup gun on ground
+                    if (playerGuns[0] != gunsDropped[i][4] && playerGuns[1] != gunsDropped[i][4]) {
+                        if (playerGuns[1] == -1) {
+                            playerGuns[1] = gunsDropped[i][4];
+                            gunSwitchReal();
+                        }
+                        else {
+                            gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
+                            playerGuns[playerGun] = gunsDropped[i][4];
+                        }
+                        SFX_RELOAD.setVolume(volume/100);
+                        SFX_RELOAD.play();
+                        gunsDropped.splice(i, 1);
+                        i--;
                     }
                     else {
-                        gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
-                        playerGuns[playerGun] = gunsDropped[i][4];
+                        SFX_FAIL.setVolume(volume/100);
+                        SFX_FAIL.play();
                     }
-                    gunsDropped.splice(i, 1);
-                    i--;
                     gunsDroppedTemp = false;
+
                 }
                 if (!keyIsDown(32)) {
                     gunsDroppedTemp = true;
@@ -560,16 +575,24 @@ function shop() {
                             drawImage(NUMBERS[shopPrices[shopRooms[i][j+4]] % 10], itemX[j]+9, 260);
                         }
 
-                        if (keyIsDown(32) && shopBuyTemp && coins >= shopPrices[shopRooms[i][j+4]] && playerGuns[0] != shopRooms[i][j+4] && playerGuns[1] != shopRooms[i][j+4]) { // Space pressed (buy item)
-                            if (playerGuns[1] == -1) {
-                                playerGuns[1] = shopRooms[i][j+4];
-                                gunSwitchReal();
-                            } else {
-                                gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
-                                playerGuns[playerGun] = shopRooms[i][j+4];
+                        if (keyIsDown(32) && shopBuyTemp) { // Space pressed (buy item)
+                            if (coins >= shopPrices[shopRooms[i][j+4]] && playerGuns[0] != shopRooms[i][j+4] && playerGuns[1] != shopRooms[i][j+4]) {
+                                if (playerGuns[1] == -1) {
+                                    playerGuns[1] = shopRooms[i][j+4];
+                                    gunSwitchReal();
+                                } else {
+                                    gunsDropped.push([level, room, playerX, playerY, playerGuns[playerGun]]);
+                                    playerGuns[playerGun] = shopRooms[i][j+4];
+                                }
+                                coins -= shopPrices[shopRooms[i][j+4]];
+                                shopRooms[i][j+4] = -1;
+                                SFX_BUY.setVolume(volume/100);
+                                SFX_BUY.play();
                             }
-                            coins -= shopPrices[shopRooms[i][j+4]];
-                            shopRooms[i][j+4] = -1;
+                            else {
+                                SFX_FAIL.setVolume(volume/100);
+                                SFX_FAIL.play();
+                            }
                             shopBuyTemp = false;
                         }
                         if (!keyIsDown(32)) shopBuyTemp = true;
@@ -1281,6 +1304,8 @@ class Coin {
 
     collect() {
         coins += COIN_VALUE[this.type];
+        SFX_COIN.setVolume(volume/100);
+        SFX_COIN.play();
     }
 
     draw() {
