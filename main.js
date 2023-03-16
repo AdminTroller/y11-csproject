@@ -51,7 +51,7 @@ var room = 14;
 // Pistol, Kamikaze, Machine, Shotgun
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5, 1];
-const ENEMY_HEALTH = [4, 1, 6, 5];
+const ENEMY_HEALTH = [4, 1, 6, 6];
 const ENEMY_HURT_TIME_BASE = [30, 20, 30, 20];
 const ENEMY_SPREAD_DISTANCE = [40, 0, 40, 40];
 const ENEMY_SPREAD_PLAYER_DISTANCE = [100, 0, 100, 60];
@@ -1284,6 +1284,14 @@ class Enemy {
             if (this.firingCooldown * this.firingSlowdown >= ENEMY_FIRING_COOLDOWN_BASE[this.type] && this.seePlayer) {
                 var bullet = new EnemyBullet(this.x, this.y, this.type);
                 enemyBullets.push(bullet);
+
+                if (this.type == 3) { // Shotgun Enemy
+                    for (var i = 0; i < 6; i++) {
+                        var bullet = new EnemyBullet(this.x, this.y, this.type);
+                        enemyBullets.push(bullet);
+                    }
+                }
+
                 this.firingCooldown = Math.random() * 10 - 5;
             }
         }
@@ -1299,7 +1307,7 @@ class Enemy {
         var deltaX = playerX - this.x;
         var deltaY = playerY - this.y;
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
-        var divider = distance / 10;
+        var divider = distance / 3;
         var tempX = this.x;
         var tempY = this.y
         
@@ -1349,6 +1357,11 @@ class EnemyBullet {
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
+
+        if (this.type == 3) { // Shotgun
+            this.dx += Math.random()*3 - 1.5;
+            this.dy += Math.random()*3 - 1.5;
+        }
     }
 
     update() {
