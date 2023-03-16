@@ -48,7 +48,7 @@ var coins = 0;
 var level = 0;
 var room = 0;
 
-// Pistol, Kamikaze, Machine, Shotgun
+// Pistol, Kamikaze, Machine, Shotgun, Sniper
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5, 1];
 const ENEMY_HEALTH = [4, 1, 6, 6];
@@ -65,8 +65,8 @@ var enemyFiringCooldown = 0;
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
 
-var shopRooms = [[0, 11, 1.2, false, -1, -1], [0, 17, 1.2, false, -1, -1]]; // [level, room, multiplier, visited, item1, item2, item3]
-var shopPrices = [0, 8, 14, 12, 13];
+var shopRooms = [[0, 11, 1, false, -1, -1], [0, 17, 1.3, false, -1, -1]]; // [level, room, multiplier, visited, item1, item2, item3]
+var shopPrices = [0, 8, 16, 12, 14];
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
