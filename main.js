@@ -254,7 +254,7 @@ function draw() { // Loop
     if (state == "menu") menu();
 
     if (state == "playing") {
-        noCursor();
+        if (!playerDead) noCursor();
         tiles();
         item();
         enemy();
@@ -438,7 +438,25 @@ function ui() {
     uiCoins();
     uiGuns();
 
-    if (!paused) drawCrosshair();
+    if (!paused && !playerDead) drawCrosshair();
+
+    // Death Text
+    if (playerDead) {
+        cursor();
+        textAlign(CENTER, CENTER);
+        textFont(FONT_SANS_BOLD);
+        stroke(60, 0, 0);
+        strokeWeight(4);
+        fill(180, 0, 0);
+        textSize(60);
+        text('You Died', 512, 260);
+
+        stroke(60, 0, 0);
+        strokeWeight(4);
+        fill(180, 50, 50);
+        textSize(24);
+        text('- Reload page to retry -', 512, 340);
+    }
 }
 
 function uiHearts() {
@@ -1084,7 +1102,7 @@ function tiles() {
 }
 
 function pause() {
-    if (keyIsDown(27) && !pauseTemp && !inFade) { // Esc pressed
+    if (keyIsDown(27) && !pauseTemp && !inFade && !playerDead) { // Esc pressed
         paused = !paused;
         pauseTemp = true;
         if (paused) {
@@ -1112,7 +1130,7 @@ function pause() {
         text("- Paused -", 512, 288);
     }
     else {
-        noCursor();
+        if (!playerDead) noCursor();
     }
 }
 
