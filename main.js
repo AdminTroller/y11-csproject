@@ -35,6 +35,7 @@ var playerGuns = [0, -1];
 var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = [12, 14, 9, 9, 20];
+const PLAYER_SLOWDOWN = [1, 0.9, 0.75, 0.8, 0.85];
 var playerGunCooldowns = [20, 10, 6, 10, 10];
 var playerFiringCooldown = playerGunCooldowns[0];
 var gunAmmo = [10, 25, 45, 25, 25];
@@ -661,11 +662,11 @@ function playerMovement() {
     if (okY) playerY += dy;
 
     if (level_clear[level][room]) {
-        playerSpeed = 6;
+        playerSpeed = 7;
         playerWalkDelay = 4;
     }
     else {
-        playerSpeed = 4;
+        playerSpeed = 4 * PLAYER_SLOWDOWN[playerGuns[playerGun]];
         playerWalkDelay = 6;
     }
 
@@ -839,7 +840,7 @@ function playerDraw() {
         playerWalkTimer++;
     }
     else {
-        drawImageSmooth(PLAYER_SPRITES[1][3], playerX, playerY);
+        drawImage(PLAYER_SPRITES[1][3], playerX, playerY);
         playerWalkAnimation = 3;
     }
 
