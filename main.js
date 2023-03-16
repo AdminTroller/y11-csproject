@@ -88,10 +88,10 @@ function setup() { // Inital setup
 function preload() { // Load sprites
 
     PATH = "Sprites/Player/Walk/";
-    PLAYER_UP = [loadImage(PATH + "walk_down1.png")];
+    PLAYER_UP = [loadImage(PATH + "walk_up1.png"),loadImage(PATH + "walk_up2.png"),loadImage(PATH + "walk_up3.png"),loadImage(PATH + "walk_up4.png"),loadImage(PATH + "walk_up5.png"),loadImage(PATH + "walk_up6.png"),loadImage(PATH + "walk_up7.png"),loadImage(PATH + "walk_up8.png")];
     PLAYER_DOWN = [loadImage(PATH + "walk_down1.png"),loadImage(PATH + "walk_down2.png"),loadImage(PATH + "walk_down3.png"),loadImage(PATH + "walk_down4.png"),loadImage(PATH + "walk_down5.png"),loadImage(PATH + "walk_down6.png"),loadImage(PATH + "walk_down7.png"),loadImage(PATH + "walk_down8.png")];
-    PLAYER_LEFT = [loadImage(PATH + "walk_down1.png")];
-    PLAYER_RIGHT = [loadImage(PATH + "walk_down1.png")];
+    PLAYER_LEFT = [loadImage(PATH + "walk_left1.png"),loadImage(PATH + "walk_left2.png"),loadImage(PATH + "walk_left3.png"),loadImage(PATH + "walk_left4.png"),loadImage(PATH + "walk_left5.png"),loadImage(PATH + "walk_left6.png"),loadImage(PATH + "walk_left7.png"),loadImage(PATH + "walk_left8.png")];
+    PLAYER_RIGHT = [loadImage(PATH + "walk_right1.png"),loadImage(PATH + "walk_right2.png"),loadImage(PATH + "walk_right3.png"),loadImage(PATH + "walk_right4.png"),loadImage(PATH + "walk_right5.png"),loadImage(PATH + "walk_right6.png"),loadImage(PATH + "walk_right7.png"),loadImage(PATH + "walk_right8.png")];
     PLAYER_SPRITES = [PLAYER_UP, PLAYER_DOWN, PLAYER_LEFT, PLAYER_RIGHT];
 
     PATH = "Sprites/";
@@ -348,6 +348,7 @@ function mouseClicked() {
 }
 
 function saveGame(i) {
+    playerHealth = 6;
     localStorage.setItem("level", level);
     localStorage.setItem("room", room);
     localStorage.setItem("coins", coins);
@@ -619,7 +620,13 @@ function playerMovement() {
 
     // Walk Animation Help
     if (dx == 0 && dy == 0) playerMoving = false;
-    else playerMoving = true;
+    else {
+        playerMoving = true;
+        if (dx > 0) playerDir = 3; // Right
+        else if (dx < 0) playerDir = 2; // Left
+        else if (dy > 0) playerDir = 1; // Down
+        else if (dy < 0) playerDir = 0; // Up
+    }
 
 }
 
@@ -774,9 +781,15 @@ function playerDie() {
 function playerDraw() {
     // if (playerHurtTime >= PLAYER_HURT_TIME_BASE) drawImageSmooth(PLAYER, playerX, playerY);
     // else drawImageSmooth(PLAYER_HURT, playerX, playerY);
+    if (playerMoving) {
+        drawImageSmooth(PLAYER_SPRITES[playerDir][playerWalkAnimation], playerX, playerY);
+        playerWalkTimer++;
+    }
+    else {
+        drawImageSmooth(PLAYER_SPRITES[1][3], playerX, playerY);
+        playerWalkAnimation = 3;
+    }
 
-    drawImageSmooth(PLAYER_SPRITES[1][playerWalkAnimation], playerX, playerY);
-    if (playerMoving) playerWalkTimer++;
     if (playerWalkTimer >= PLAYER_WALK_DELAY) {
         playerWalkTimer = 0;
         playerWalkAnimation++
