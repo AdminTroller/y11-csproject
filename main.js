@@ -188,10 +188,14 @@ function preload() { // Load sprites
     SAVE_POINT = loadImage(PATH + "Items/save_point.png");
     
     PATH = "Audio/";
+    MUSIC_MENU = loadSound(PATH + 'Music/menu.mp3');
+    MUSIC_MENU.setVolume(volume/100);
     MUSIC_OVERWORLD = loadSound(PATH + 'Music/overworld.mp3');
     MUSIC_OVERWORLD.setVolume(volume/100);
+    MUSIC_OVERWORLD2 = loadSound(PATH + 'Music/overworld2.mp3');
+    MUSIC_OVERWORLD2.setVolume(volume/100);
     MUSIC_CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
-    MUSIC_CREDITS.setVolume(volume/100);
+    MUSIC_CREDITS.setVolume(volume/70);
 
     SFX_DEATH = loadSound(PATH + 'SFX/death.mp3');
     SFX_HIT = loadSound(PATH + 'SFX/hit.mp3');
@@ -257,6 +261,10 @@ function menu() {
             coins = 0;
             currentSave = -1;
             state = "playing";
+
+            MUSIC_MENU.stop();
+            MUSIC_OVERWORLD.setVolume(volume/100);
+            MUSIC_OVERWORLD.loop();
         }
     }
     else drawImage(MENU_BUTTON, x, y);
@@ -276,6 +284,16 @@ function menu() {
             playerGuns[1] = parseInt(localStorage.getItem("playerGuns1"));
             currentSave = parseInt(localStorage.getItem("currentSave"));
             state = "playing";
+
+            MUSIC_MENU.stop();
+            if (level == 0) {
+                MUSIC_OVERWORLD.setVolume(volume/100);
+                MUSIC_OVERWORLD.loop();
+            }   
+            else {
+                MUSIC_OVERWORLD2.setVolume(volume/100);
+                MUSIC_OVERWORLD2.loop();
+            }
         }
     }
     else drawImage(MENU_BUTTON, x, y);
@@ -316,8 +334,7 @@ function menu() {
         localStorage.setItem("volumeX", volumeX);
     }
     volume = Math.round((volumeX/3) + 50);
-    MUSIC_OVERWORLD.setVolume(volume/100);
-    MUSIC_CREDITS.setVolume(volume/100);
+    MUSIC_MENU.setVolume(volume/100);
     drawImage(VOLUME_SLIDER, 512, 386);
     drawImageSmooth(VOLUME_KNOB, volumeX + 512, 386);
     textSize(32);
@@ -342,7 +359,8 @@ function menu() {
 function mouseClicked() {
     if (state == "click") {
         state = "menu";
-        MUSIC_OVERWORLD.loop();
+        MUSIC_MENU.setVolume(volume/100);
+        MUSIC_MENU.loop();
     }
     console.log(mouseX, mouseY);
 }
@@ -956,6 +974,14 @@ function pause() {
     if (keyIsDown(27) && !pauseTemp && !inFade) { // Esc pressed
         paused = !paused;
         pauseTemp = true;
+        if (paused) {
+            MUSIC_OVERWORLD.pause();
+            MUSIC_OVERWORLD2.pause();
+        }
+        else {
+            // MUSIC_OVERWORLD.play();
+            MUSIC_OVERWORLD2.play();
+        }
     }
     if (!keyIsDown(27)) pauseTemp = false;
 
