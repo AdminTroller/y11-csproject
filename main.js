@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "click"; // Game state. click, menu, playing
+var state = "playing"; // Game state. click, menu, playing
 
 var volume = 0;
 var volumeX = 0;
@@ -702,17 +702,32 @@ function playerHurt() {
 
 function playerSave() {
     for (var i = 0; i < saveRooms.length; i++) {
-        if (saveRooms[i][0] == level && saveRooms[i][1] == room && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) { 
-            drawImage(SPACE_INDICATOR, playerX, playerY+40);
-            
-            if (currentSave == i) {
-                if (saveRooms[i][2] == "up") drawImage(BARRIER_HORIZONTAL, 512, 32);
-                if (saveRooms[i][2] == "down") drawImage(BARRIER_HORIZONTAL, 512, 544);
-                if (saveRooms[i][2] == "left") drawImage(BARRIER_VERTICAL, 32, 288);
-                if (saveRooms[i][2] == "right") drawImage(BARRIER_VERTICAL, 992, 288);
+        if (saveRooms[i][0] == level && saveRooms[i][1] == room) {
+            if (currentSave == i) { // Save Barrier
+                if (saveRooms[i][2] == "up") {
+                    drawImage(BARRIER_HORIZONTAL, 512, 32);
+                    if (playerY < 86) playerY = 86;
+                }
+                if (saveRooms[i][2] == "down") { 
+                    drawImage(BARRIER_HORIZONTAL, 512, 544);
+                    if (playerY > 576-86) playerY = 576 - 86;
+                }
+                if (saveRooms[i][2] == "left") {
+                    drawImage(BARRIER_VERTICAL, 32, 288);
+                    if (playerX < 80) playerX = 80;
+                }
+                if (saveRooms[i][2] == "right") {
+                    drawImage(BARRIER_VERTICAL, 992, 288);
+                    if (playerX > 1024 - 80) playerX = 1024 - 80;
+                }
+
             }
 
-            if (keyIsDown(32)) saveGame(i);
+            if (playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) {
+                drawImage(SPACE_INDICATOR, playerX, playerY+40);
+
+                if (keyIsDown(32)) saveGame(i);
+            }
         }
     }
 }
@@ -861,6 +876,27 @@ function tiles() {
             if (LEVELS[level][room][y][x].length != 0) drawImage(TILES1[LEVELS[level][room][y][x]], x*32+16, y*32+16);
         }
     }
+
+    // Level cards
+    if (level == 0 && room == 0) {
+        textSize(32);
+        textAlign(CENTER);
+        textFont(FONT_SANS);
+        fill(255);
+        strokeWeight(5);
+        stroke(0);
+        text("Level 1: Frail Forest", 512, 464);
+    }
+    if (level == 1 && room == 0) {
+        textSize(32);
+        textAlign(CENTER);
+        textFont(FONT_SANS);
+        fill(255);
+        strokeWeight(5);
+        stroke(0);
+        text("Level 2: Bomb Garden", 512, 464);
+    }
+    
 }
 
 function pause() {
