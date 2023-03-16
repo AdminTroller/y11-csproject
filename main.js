@@ -1,6 +1,6 @@
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
-var state = "click"; // Game state. click, menu, playing, credits
+var state = "playing"; // Game state. click, menu, playing, credits
 
 var volume = 0;
 var volumeX = 0;
@@ -35,18 +35,18 @@ var playerGuns = [0, -1];
 var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = [12, 14, 9, 9, 22];
-const PLAYER_SLOWDOWN = [1, 0.9, 0.75, 0.8, 0.85];
-var playerGunCooldowns = [20, 10, 6, 10, 40];
+const PLAYER_SLOWDOWN = [1, 0.9, 0.7, 0.7, 0.85];
+var playerGunCooldowns = [20, 10, 6, 40, 40];
 var playerFiringCooldown = playerGunCooldowns[0];
-var gunAmmo = [10, 25, 45, 25, 2];
+var gunAmmo = [10, 25, 45, 8, 2];
 var playerAmmo = [gunAmmo[0], gunAmmo[1], gunAmmo[2], gunAmmo[3], gunAmmo[4]];
 var gunReload = [40, 60, 70, 60, 60];
 var playerReload = [gunReload[0], gunReload[1], gunReload[2], gunReload[3], gunReload[4]];
-var gunDamage = [1, 0.85, 0.5, 1, 5];
+var gunDamage = [1, 0.85, 0.5, 0.7, 5];
 
 var coins = 0;
 var level = 0;
-var room = 9;
+var room = 7;
 
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5];
@@ -713,6 +713,14 @@ function playerShooting() {
                 playerBullets.push(bullet);
                 playerFiringCooldown = 0;
                 playerAmmo[playerGuns[playerGun]] -= 1;
+
+                if (playerGuns[playerGun] == 3) { // Shotgun
+                    for (var i = 0; i < 6; i++) {
+                        var bullet = new PlayerBullet();
+                        playerBullets.push(bullet);
+                    }
+                }
+
                 SFX_SHOOT.setVolume(volume/100);
                 SFX_SHOOT.play();
             }
@@ -1074,6 +1082,11 @@ class PlayerBullet {
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
+
+        if (this.type == 3) { // Shotgun
+            this.dx += Math.random()*4 - 2;
+            this.dy += Math.random()*4 - 2;
+        }
     }
 
     update() {
