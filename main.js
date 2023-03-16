@@ -21,6 +21,12 @@ var playerDead = false;
 var playerInRoom = true;
 var changeRoomDir;
 
+const PLAYER_WALK_DELAY = 4;
+var playerWalkTimer = 0;
+var playerWalkAnimation = 0;
+var playerDir = 0;
+var playerMoving = false;
+
 var allowChangeRoomFade = false;
 var changeRoomFadeTimer = 0;
 
@@ -80,6 +86,14 @@ function setup() { // Inital setup
 }
 
 function preload() { // Load sprites
+
+    PATH = "Sprites/Player/Walk/";
+    PLAYER_UP = [loadImage(PATH + "walk_down1.png")];
+    PLAYER_DOWN = [loadImage(PATH + "walk_down1.png"),loadImage(PATH + "walk_down2.png"),loadImage(PATH + "walk_down3.png"),loadImage(PATH + "walk_down4.png"),loadImage(PATH + "walk_down5.png"),loadImage(PATH + "walk_down6.png"),loadImage(PATH + "walk_down7.png"),loadImage(PATH + "walk_down8.png")];
+    PLAYER_LEFT = [loadImage(PATH + "walk_down1.png")];
+    PLAYER_RIGHT = [loadImage(PATH + "walk_down1.png")];
+    PLAYER_SPRITES = [PLAYER_UP, PLAYER_DOWN, PLAYER_LEFT, PLAYER_RIGHT];
+
     PATH = "Sprites/";
     PLAYER = loadImage(PATH + "Player/player.png");
     PLAYER_HURT = loadImage(PATH + "Player/player_hurt.png");
@@ -602,6 +616,11 @@ function playerMovement() {
 
     if (level_clear[level][room]) playerSpeed = 6;
     else playerSpeed = 4;
+
+    // Walk Animation Help
+    if (dx == 0 && dy == 0) playerMoving = false;
+    else playerMoving = true;
+
 }
 
 function playerShooting() {
@@ -753,8 +772,16 @@ function playerDie() {
 }
 
 function playerDraw() {
-    if (playerHurtTime >= PLAYER_HURT_TIME_BASE) drawImageSmooth(PLAYER, playerX, playerY);
-    else drawImageSmooth(PLAYER_HURT, playerX, playerY);
+    // if (playerHurtTime >= PLAYER_HURT_TIME_BASE) drawImageSmooth(PLAYER, playerX, playerY);
+    // else drawImageSmooth(PLAYER_HURT, playerX, playerY);
+
+    drawImageSmooth(PLAYER_SPRITES[1][playerWalkAnimation], playerX, playerY);
+    if (playerMoving) playerWalkTimer++;
+    if (playerWalkTimer >= PLAYER_WALK_DELAY) {
+        playerWalkTimer = 0;
+        playerWalkAnimation++
+        if (playerWalkAnimation >= 8) playerWalkAnimation = 0;
+    }
 }
 
 function playerMoveEdge() {
