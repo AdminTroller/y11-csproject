@@ -111,6 +111,7 @@ function preload() { // Load sprites
     PLAYER = loadImage(PATH + "Player/player.png");
     PLAYER_HURT = loadImage(PATH + "Player/player_hurt.png");
     SPACE_INDICATOR = loadImage(PATH + "Player/space_indicator.png");
+    SHIFT_INDICATOR = loadImage(PATH + "Player/shift_indicator.png");
 
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
@@ -536,7 +537,8 @@ function uiGuns() {
             drawImage(GUN_BOX2, 968, 544);
             drawImage(GUN_SPRITES[playerGuns[1]], 968, 544);
         }
-        drawImage(SWAP_GUN, 892, 546);
+        drawImage(SWAP_GUN, 884, 556);
+        drawImage(SHIFT_INDICATOR, 884, 528);
     }
 }
 
