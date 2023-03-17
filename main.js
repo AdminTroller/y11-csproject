@@ -43,7 +43,7 @@ var gunAmmo = [10, 25, 45, 8, 2];
 var playerAmmo = [gunAmmo[0], gunAmmo[1], gunAmmo[2], gunAmmo[3], gunAmmo[4]];
 var gunReload = [40, 60, 70, 60, 60];
 var playerReload = [gunReload[0], gunReload[1], gunReload[2], gunReload[3], gunReload[4]];
-var gunDamage = [1, 0.85, 0.5, 0.8, 5];
+var gunDamage = [1, 0.85, 0.5, 0.75, 5];
 var startupCooldown = 30;
 
 var coins = 0;
@@ -393,6 +393,10 @@ function menu() {
 }
 
 function credits() {
+    MUSIC_OVERWORLD.stop();
+    MUSIC_OVERWORLD2.stop();
+    MUSIC_BOSS.stop();
+
     drawImage(MENU_BACKGROUND, 512, 288);
     textAlign(CENTER, CENTER);
     textFont(FONT_SANS_BOLD);
@@ -938,6 +942,8 @@ function playerSave() {
 function playerDie() {
     playerDead = true;
     MUSIC_OVERWORLD.stop();
+    MUSIC_OVERWORLD2.stop();
+    MUSIC_BOSS.stop();
     SFX_DEATH.setVolume(volume/100);
     SFX_DEATH.play();
 }
