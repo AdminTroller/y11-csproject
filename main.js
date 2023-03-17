@@ -393,6 +393,7 @@ function menu() {
 }
 
 function credits() {
+    cursor();
     MUSIC_OVERWORLD.stop();
     MUSIC_OVERWORLD2.stop();
     MUSIC_BOSS.stop();
