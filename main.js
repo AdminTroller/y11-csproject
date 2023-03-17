@@ -69,6 +69,7 @@ const bossY = 140;
 var bossHealth = 100;
 var bossAttack = 0;
 var bossTimer = 120;
+var bossPattern = 0;
 
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
@@ -1045,29 +1046,58 @@ function boss() {
             }
     
             if (bossAttack == 1) { // Shoot player attack
-                if (bossTimer % 5 == 0 && (bossTimer > 20 && bossTimer < 70 || (bossTimer > 120 && bossTimer < 180))) {
+                if (bossTimer % 5 == 0 && (bossTimer > 20 && bossTimer < 70 || (bossTimer > 110 && bossTimer < 180))) {
                     var bullet = new EnemyBullet(bossX, bossY, 0, true);
                     enemyBullets.push(bullet);
                 }
             }
 
             if (bossAttack == 2) { // Summon enemies
-                var pattern;
-                if (bossTimer == 0) pattern = Math.floor(Math.random()*3) + 1;
-                pattern = 1;
 
                 if (bossTimer > 0 && bossTimer < 120 && Math.ceil(bossTimer/5) % 2 == 0) { // Enemy spawn indicator
-                    if (pattern == 1) {
+                    if (bossPattern == 1) {
                         drawImage(SPAWN_INDICATOR, 124, 400);
+                        drawImage(SPAWN_INDICATOR, 124, 340);
                         drawImage(SPAWN_INDICATOR, 900, 400);
+                    }
+                    if (bossPattern == 2) {
+                        drawImage(SPAWN_INDICATOR, 512, 240);
+                        drawImage(SPAWN_INDICATOR, 900, 120);
+                        drawImage(SPAWN_INDICATOR, 124, 120);
+                    }
+                    if (bossPattern == 3) {
+                        drawImage(SPAWN_INDICATOR, 900, 120);
+                        drawImage(SPAWN_INDICATOR, 124, 120);
+                    }
+                    if (bossPattern == 4) {
+                        drawImage(SPAWN_INDICATOR, 900, 120);
+                        drawImage(SPAWN_INDICATOR, 124, 120);
+                        drawImage(SPAWN_INDICATOR, 900, 456);
+                        drawImage(SPAWN_INDICATOR, 124, 456);
                     }
                 }
 
                 if (bossTimer == 120) { // Enemy spawns
                     // (x, y, type, level, room)
-                    if (pattern == 1) { 
+                    if (bossPattern == 1) { 
                         enemies.push(new Enemy(124, 400, 0, 0, 20)); 
+                        enemies.push(new Enemy(124, 340, 0, 0, 20)); 
                         enemies.push(new Enemy(900, 400, 0, 0, 20));
+                    }
+                    if (bossPattern == 2) { 
+                        enemies.push(new Enemy(512, 240, 3, 0, 20)); 
+                        enemies.push(new Enemy(900, 120, 1, 0, 20)); 
+                        enemies.push(new Enemy(124, 120, 0, 0, 20)); 
+                    }
+                    if (bossPattern == 3) { 
+                        enemies.push(new Enemy(900, 120, 2, 0, 20)); 
+                        enemies.push(new Enemy(124, 120, 2, 0, 20)); 
+                    }
+                    if (bossPattern == 4) { 
+                        enemies.push(new Enemy(900, 120, 1, 0, 20)); 
+                        enemies.push(new Enemy(124, 120, 0, 0, 20)); 
+                        enemies.push(new Enemy(900, 456, 0, 0, 20)); 
+                        enemies.push(new Enemy(124, 456, 1, 0, 20)); 
                     }
                 }
             }
@@ -1075,9 +1105,10 @@ function boss() {
             bossTimer++;
             if (bossTimer >= 260) {
                 var temp = bossAttack;
-                bossAttack = Math.floor(Math.random()*3) + 1;
-                while (bossAttack == temp) bossAttack = Math.floor(Math.random()*3) + 1;
+                bossAttack = Math.floor(Math.random()*2) + 1;
+                while (bossAttack == temp) bossAttack = Math.floor(Math.random()*2) + 1;
                 bossTimer = 0;
+                bossPattern = Math.floor(Math.random()*2) + 1;
             }
         }
     }
@@ -1575,7 +1606,6 @@ function enemySpawn() { // (x, y, type, level, room)
 
     enemies.push(new Enemy(800, 100, 1, 0, 7));
     enemies.push(new Enemy(900, 100, 1, 0, 7));
-    enemies.push(new Enemy(900, 200, 1, 0, 7));
     enemies.push(new Enemy(800, 400, 1, 0, 7));
     enemies.push(new Enemy(900, 400, 1, 0, 7));
     enemies.push(new Enemy(100, 100, 0, 0, 7));
