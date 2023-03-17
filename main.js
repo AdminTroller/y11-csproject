@@ -378,17 +378,17 @@ function menu() {
     textAlign(LEFT, CENTER);
     text(volume + "%", 700, 384);
 
-    if (keyIsDown(46)) { // TEMPORARY DEBUG DELETE DATA
-        level = 0;
-        room = 0;
-        coins = 0;
-        playerGuns = [0, -1];
-        currentSave = -1;
-        saveGame();
-    }
-    textSize(12);
-    fill(0, 0, 0);
-    text("press Delete to delete data (temporary debug)", 710, 556);
+    // if (keyIsDown(46)) { // TEMPORARY DEBUG DELETE DATA
+    //     level = 0;
+    //     room = 0;
+    //     coins = 0;
+    //     playerGuns = [0, -1];
+    //     currentSave = -1;
+    //     saveGame();
+    // }
+    // textSize(12);
+    // fill(0, 0, 0);
+    // text("press Delete to delete data (temporary debug)", 710, 556);
 
     drawImage(BORDER, 512, 288);
 }
