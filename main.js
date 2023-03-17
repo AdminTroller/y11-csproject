@@ -1187,9 +1187,9 @@ function enemy() {
         var enemy = enemies[i];
         enemy.update();
 
-        if (keyIsDown(71)) { // Debug kill enemy
-            if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
-        }
+        // if (keyIsDown(71)) { // Debug kill enemy
+        //     if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
+        // }
     }
 
     for (var l = 0; l < level_clear.length; l++) { // Check room clear
