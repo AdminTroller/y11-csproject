@@ -1135,7 +1135,7 @@ function boss() {
                 bossAttack = Math.floor(Math.random()*2) + 1;
                 while (bossAttack == temp) bossAttack = Math.floor(Math.random()*2) + 1;
                 bossTimer = 0;
-                bossPattern = Math.floor(Math.random()*2) + 1;
+                bossPattern = Math.floor(Math.random()*4) + 1;
             }
         }
     }
