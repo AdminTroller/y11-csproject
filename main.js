@@ -313,7 +313,7 @@ function menu() {
     var y = 260;
     if (mouseX >= x-128 && mouseX <= x+128 && mouseY >= y-32 && mouseY <= y+32 && !volumePressed) {
         drawImage(MENU_BUTTON_HOVER, x, y); // Continue button
-        if (mouseIsPressed && localStorage.getItem("level")) {
+        if (mouseIsPressed && localStorage.getItem("currentSave") >= 0) {
             level = parseInt(localStorage.getItem("level"));
             room = parseInt(localStorage.getItem("room"));
             coins = parseInt(localStorage.getItem("coins"));
