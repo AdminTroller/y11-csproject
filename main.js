@@ -178,6 +178,7 @@ function preload() { // Load sprites
 
     BOSS0 = [loadImage(PATH + "Enemy/1/boss1.png"),loadImage(PATH + "Enemy/1/boss2.png"),loadImage(PATH + "Enemy/1/boss3.png"),loadImage(PATH + "Enemy/1/boss4.png"),loadImage(PATH + "Enemy/1/boss5.png"),loadImage(PATH + "Enemy/1/boss6.png")]
     SPAWN_INDICATOR = loadImage(PATH + "Enemy/spawn_indicator.png");
+    BOSSBAR_BORDER = loadImage(PATH + "Enemy/bossbar_border.png");
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
@@ -1035,7 +1036,7 @@ function boss() {
     if (level == 0 && room == 20 && bossHealth > 0) {
         drawImage(BOSS0[0], bossX, bossY);
 
-        if (!paused && !playerDead) {
+        if (!paused && !playerDead && playerInRoom) {
             for (var i = 0; i < playerBullets.length; i++) { // Boss takes damage
                 var bullet = playerBullets[i];
                 if (Math.abs(bullet.x - bossX) < 56 && Math.abs(bullet.y - bossY) < 70) {
@@ -1109,6 +1110,14 @@ function boss() {
                 while (bossAttack == temp) bossAttack = Math.floor(Math.random()*2) + 1;
                 bossTimer = 0;
                 bossPattern = Math.floor(Math.random()*2) + 1;
+            }
+        }
+    }
+    if (bossHealth <= 0) {
+        for (var i = 0; i < enemies.length; i++) {
+            if (enemies[i].level == 0 && enemies[i].room == 20) {
+                enemies.splice(i, 1);
+                i--;
             }
         }
     }
