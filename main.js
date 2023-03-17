@@ -1117,7 +1117,7 @@ function boss() {
                         enemies.push(new Enemy(124, 120, 0, 0, 20)); 
                     }
                     if (bossPattern == 3) { 
-                        enemies.push(new Enemy(900, 120, 2, 0, 20)); 
+                        enemies.push(new Enemy(900, 120, 1, 0, 20)); 
                         enemies.push(new Enemy(124, 120, 2, 0, 20)); 
                     }
                     if (bossPattern == 4) { 
