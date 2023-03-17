@@ -343,10 +343,10 @@ function menu() {
 
     fill(64, 64, 64);
     textSize(16);
-    text('Programming - AdminTroller', 512, 500);
-    text('Music - AdminTroller', 512, 480);
-    text('Sprites - mi_gusta', 512, 520);
-    text('Playtesting - no one yet', 512, 540);
+    text('Programming - Edmond', 512, 480);
+    text('Music - Edmond', 512, 500);
+    text('Sprites - Isaac, mi_gusta', 512, 520);
+    text('Playtesting - Aaden, Jovan', 512, 540);
 
     if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) volumePressed = true;
     if (!mouseIsPressed) volumePressed = false;
@@ -576,10 +576,10 @@ function chest() {
 
     for (var i = 0; i < heartsDropped.length; i++) {
         if (heartsDropped[i][0] == level && heartsDropped[i][1] == room) {
-            drawImage(HALF_HEART, heartsDropped[i][2], heartsDropped[i][3]);
+            drawImage(FULL_HEART, heartsDropped[i][2], heartsDropped[i][3]);
 
             if (playerHealth < 6 && Math.abs(playerX - heartsDropped[i][2]) < 32 && Math.abs(playerY - heartsDropped[i][3]) < 32) {
-                playerHealth += 1;
+                playerHealth += 2;
                 heartsDropped.splice(i, 1);
                 i--;
 
@@ -843,7 +843,7 @@ function playerHurt() {
         var bullet = enemyBullets[i];
         if (Math.abs(bullet.x - playerX) <= 20 && Math.abs(bullet.y - playerY) <= 28) {
             if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
-                playerHealth -= 1;
+                playerHealth -= 2;
                 playerHurtTime = 0;
                 if (playerHealth <= 0) playerDie();
                 else {
@@ -862,7 +862,7 @@ function playerHurt() {
             if (Math.abs(enemy.x - playerX) <= 28 && Math.abs(enemy.y - playerY) <= 44 && !enemy.dead) {
                 if (enemy.type == 1) enemy.die();
                 if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
-                    playerHealth -= 1;
+                    playerHealth -= 2;
                     playerHurtTime = 0;
                     if (playerHealth <= 0) playerDie();
                     else {
