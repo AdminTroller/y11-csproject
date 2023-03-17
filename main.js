@@ -178,6 +178,7 @@ function preload() { // Load sprites
 
     BOSS0 = [loadImage(PATH + "Enemy/1/boss1.png"),loadImage(PATH + "Enemy/1/boss2.png"),loadImage(PATH + "Enemy/1/boss3.png"),loadImage(PATH + "Enemy/1/boss4.png"),loadImage(PATH + "Enemy/1/boss5.png"),loadImage(PATH + "Enemy/1/boss6.png")]
     SPAWN_INDICATOR = loadImage(PATH + "Enemy/spawn_indicator.png");
+    BOSSBAR = loadImage(PATH + "Enemy/bossbar.png");
     BOSSBAR_BORDER = loadImage(PATH + "Enemy/bossbar_border.png");
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
@@ -1034,7 +1035,13 @@ function changeRoomFade() {
 
 function boss() {
     if (level == 0 && room == 20 && bossHealth > 0) {
+
         drawImage(BOSS0[0], bossX, bossY);
+
+        imageMode(CORNER);
+        image(BOSSBAR, 224, 16, bossHealth * 6, BOSSBAR.height*2);
+        image(BOSSBAR_BORDER, 220, 16, BOSSBAR_BORDER.width*2, BOSSBAR.height*2);
+        imageMode(CENTER);
 
         if (!paused && !playerDead && playerInRoom) {
             for (var i = 0; i < playerBullets.length; i++) { // Boss takes damage
@@ -1120,6 +1127,7 @@ function boss() {
                 i--;
             }
         }
+        enemyBullets = [];
     }
 }
 
@@ -1577,9 +1585,6 @@ class Coin {
 
 function debug() {
     textSize(32);
-    text(bossHealth, 80, 80);
-    text(bossAttack, 80, 110);
-    text(bossTimer, 80, 140);
     if (keyIsDown(72)) coins = 900; // Debug 900 coins
     if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
