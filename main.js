@@ -67,6 +67,8 @@ var enemyFiringCooldown = 0;
 const bossX = 512;
 const bossY = 140;
 var bossHealth = 100;
+var bossAttack = 0;
+var bossTimer = 0;
 
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
@@ -881,6 +883,20 @@ function playerHurt() {
             }
         }
     }
+
+    if (level == 0 && room == 20) { // Collide with boss
+        if (Math.abs(playerX - bossX) < 56 && Math.abs(playerY - bossY) < 70) {
+            if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
+                playerHealth -= 2;
+                playerHurtTime = 0;
+                if (playerHealth <= 0) playerDie();
+                else {
+                    SFX_HURT.setVolume(volume/100);
+                    SFX_HURT.play();
+                }
+            }
+        }
+    }
 }
 
 function playerSave() {
@@ -1017,13 +1033,29 @@ function boss() {
     if (level == 0 && room == 20) {
         drawImage(BOSS0[0], bossX, bossY);
 
-        for (var i = 0; i < playerBullets.length; i++) {
-            var bullet = playerBullets[i];
-            
-            if (Math.abs(bullet.x - bossX) < 56 && Math.abs(bullet.y - bossY) < 70) {
-                bossHealth -= gunDamage[playerGuns[playerGun]];
-                playerBullets.splice(i,1);
-                i--;
+        if (!paused && !playerDead) {
+            for (var i = 0; i < playerBullets.length; i++) { // Boss takes damage
+                var bullet = playerBullets[i];
+                if (Math.abs(bullet.x - bossX) < 56 && Math.abs(bullet.y - bossY) < 70) {
+                    bossHealth -= gunDamage[playerGuns[playerGun]];
+                    playerBullets.splice(i,1);
+                    i--;
+                }
+            }
+    
+            if (bossAttack == 1) { // Shoot player attack
+                if (bossTimer % 5 == 0 && (bossTimer < 70 || bossTimer > 110)) {
+                    var bullet = new EnemyBullet(bossX, bossY, 0, true);
+                    enemyBullets.push(bullet);
+                }
+            }
+    
+            bossTimer++;
+            if (bossTimer >= 180) {
+                var temp = bossAttack;
+                bossAttack = Math.floor(Math.random()*3) + 1;
+                while (bossAttack == temp) bossAttack = Math.floor(Math.random()*3) + 1;
+                bossTimer = 0;
             }
         }
     }
@@ -1403,15 +1435,17 @@ class Enemy {
 }
 
 class EnemyBullet {
-    constructor(x, y, type) {
+    constructor(x, y, type, boss=false) {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.boss = boss;
 
         var deltaX = playerX - this.x;
         var deltaY = playerY - this.y;
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
         var divider = distance / ENEMY_BULLET_SPEED[this.type];
+        if (this.boss) divider = distance / 6;
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
@@ -1482,6 +1516,8 @@ class Coin {
 function debug() {
     textSize(32);
     text(bossHealth, 80, 80);
+    text(bossAttack, 80, 110);
+    text(bossTimer, 80, 140);
     if (keyIsDown(72)) coins = 900; // Debug 900 coins
     if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
