@@ -1128,6 +1128,9 @@ function boss() {
             }
         }
         enemyBullets = [];
+        MUSIC_CREDITS.setVolume(volume/100);
+        MUSIC_CREDITS.play();
+        state = "credits";
     }
 }
 
@@ -1165,9 +1168,9 @@ function enemy() {
         var enemy = enemies[i];
         enemy.update();
 
-        if (keyIsDown(71)) { // Debug kill enemy
-            if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
-        }
+        // if (keyIsDown(71)) { // Debug kill enemy
+        //     if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
+        // }
     }
 
     for (var l = 0; l < level_clear.length; l++) { // Check room clear
@@ -1585,8 +1588,8 @@ class Coin {
 
 function debug() {
     textSize(32);
-    if (keyIsDown(72)) coins = 900; // Debug 900 coins
-    if (keyIsDown(67)) playerSpeed = 16; // Debug fast
+    // if (keyIsDown(72)) coins = 900; // Debug 900 coins
+    // if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
 
 function enemySpawn() { // (x, y, type, level, room)
