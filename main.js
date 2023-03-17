@@ -423,7 +423,7 @@ function mouseClicked() {
         MUSIC_MENU.setVolume(volume/100);
         MUSIC_MENU.loop();
     }
-    console.log(mouseX, mouseY);
+    // console.log(mouseX, mouseY);
 }
 
 function saveGame(i) {
