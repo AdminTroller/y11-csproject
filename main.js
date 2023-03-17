@@ -169,6 +169,8 @@ function preload() { // Load sprites
     ENEMY3_BULLET = loadImage(PATH + "Enemy/bullet0.png");
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET, ENEMY2_BULLET, ENEMY3_BULLET];
 
+    BOSS0 = [loadImage(PATH + "Enemy/1/boss1.png"),loadImage(PATH + "Enemy/1/boss2.png"),loadImage(PATH + "Enemy/1/boss3.png"),loadImage(PATH + "Enemy/1/boss4.png"),loadImage(PATH + "Enemy/1/boss5.png"),loadImage(PATH + "Enemy/1/boss6.png")]
+
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
 
@@ -1293,7 +1295,7 @@ class Enemy {
         this.playerBullets = playerBullets;
         if (this.hurtTime < ENEMY_HURT_TIME_BASE[this.type]) { // During hurt
             this.hurtTime++; 
-            this.firingSlowdown = 0.6;
+            this.firingSlowdown = 0.8;
             this.animation = 3;
         }
         else this.firingSlowdown = 1;
