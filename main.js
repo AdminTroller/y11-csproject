@@ -426,6 +426,8 @@ function mouseClicked() {
 }
 
 function saveGame(i) {
+    SFX_HEAL.setVolume(volume/100);
+    SFX_HEAL.play();
     playerHealth = 6;
     localStorage.setItem("level", level);
     localStorage.setItem("room", room);
@@ -557,6 +559,14 @@ function item() {
     for (var i = 0; i < saveRooms.length; i++) {
         if (saveRooms[i][0] == level && saveRooms[i][1] == room) { 
             drawImage(SAVE_POINT, 512, 288);
+            if (currentSave == i) {
+                textFont(FONT_SANS);
+                textAlign(CENTER, CENTER);
+                strokeWeight(0);
+                fill(0, 255, 0);
+                textSize(20);
+                text('Progress saved', 512, 340);
+            }
         }
     }
 
@@ -1175,9 +1185,9 @@ function enemy() {
         var enemy = enemies[i];
         enemy.update();
 
-        // if (keyIsDown(71)) { // Debug kill enemy
-        //     if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
-        // }
+        if (keyIsDown(71)) { // Debug kill enemy
+            if (enemy.level == level && enemy.room == room && !enemy.dead) enemy.die();
+        }
     }
 
     for (var l = 0; l < level_clear.length; l++) { // Check room clear
