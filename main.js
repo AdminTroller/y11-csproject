@@ -43,14 +43,14 @@ var gunAmmo = [10, 25, 45, 8, 2];
 var playerAmmo = [gunAmmo[0], gunAmmo[1], gunAmmo[2], gunAmmo[3], gunAmmo[4]];
 var gunReload = [40, 60, 70, 60, 60];
 var playerReload = [gunReload[0], gunReload[1], gunReload[2], gunReload[3], gunReload[4]];
-var gunDamage = [1, 0.85, 0.5, 0.7, 5];
+var gunDamage = [1, 0.85, 0.5, 0.8, 5];
 var startupCooldown = 30;
 
 var coins = 0;
 var level = 0;
 var room = 0;
 
-// Pistol, Kamikaze, Machine, Shotgun, Sniper
+// Pistol, Kamikaze, Machine, Shotgun
 var enemies = [];
 const ENEMY_SPEED = [1.5, 3.5, 1.5, 1];
 const ENEMY_HEALTH = [4, 1, 6, 6];
@@ -63,6 +63,10 @@ var enemyBullets = [];
 const ENEMY_BULLET_SPEED = [4.5, 10, 4.5, 4];
 const ENEMY_FIRING_COOLDOWN_BASE = [60, 0, 20, 80];
 var enemyFiringCooldown = 0;
+
+const bossX = 512;
+const bossY = 140;
+var bossHealth = 100;
 
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
@@ -107,7 +111,7 @@ function preload() { // Load sprites
 
     BORDER = loadImage(PATH + "Background/border.png");
     CROSSHAIR = loadImage(PATH + "UI/crosshair.png");
-    PLAYER_BULLETS = [loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet1.png"),loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet0.png")];
+    PLAYER_BULLETS = [loadImage(PATH + "Player/bullet0.png"),loadImage(PATH + "Player/bullet1.png"),loadImage(PATH + "Player/bullet2.png"),loadImage(PATH + "Player/bullet3.png"),loadImage(PATH + "Player/bullet4.png")];
 
     HEART_BOX = loadImage(PATH + "UI/heart_box.png");
     FULL_HEART = loadImage(PATH + "UI/full_heart.png");
@@ -259,6 +263,7 @@ function draw() { // Loop
         if (!playerDead) noCursor();
         tiles();
         item();
+        boss();
         enemy();
         player();
         ui();
@@ -348,7 +353,7 @@ function menu() {
     text('Programming - Edmond', 512, 480);
     text('Music - Edmond', 512, 500);
     text('Sprites - Isaac, mi_gusta', 512, 520);
-    text('Playtesting - Aaden, Jovan', 512, 540);
+    text('Playtesting - Aaden, Isaac, Jovan', 512, 540);
 
     if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) volumePressed = true;
     if (!mouseIsPressed) volumePressed = false;
@@ -1008,6 +1013,22 @@ function changeRoomFade() {
     }
 }
 
+function boss() {
+    if (level == 0 && room == 20) {
+        drawImage(BOSS0[0], bossX, bossY);
+
+        for (var i = 0; i < playerBullets.length; i++) {
+            var bullet = playerBullets[i];
+            
+            if (Math.abs(bullet.x - bossX) < 56 && Math.abs(bullet.y - bossY) < 70) {
+                bossHealth -= gunDamage[playerGuns[playerGun]];
+                playerBullets.splice(i,1);
+                i--;
+            }
+        }
+    }
+}
+
 function enemy() {
     for (var i = 0; i < enemyBullets.length; i++) { // Enemy Bullets
         var bullet = enemyBullets[i];
@@ -1152,8 +1173,8 @@ class PlayerBullet {
         this.dy = Math.round(deltaY / divider * 10)/10;
 
         if (this.type == 3) { // Shotgun
-            this.dx += Math.random()*4 - 2;
-            this.dy += Math.random()*4 - 2;
+            this.dx += Math.random()*3 - 1.5;
+            this.dy += Math.random()*3 - 1.5;
         }
     }
 
@@ -1460,6 +1481,7 @@ class Coin {
 
 function debug() {
     textSize(32);
+    text(bossHealth, 80, 80);
     if (keyIsDown(72)) coins = 900; // Debug 900 coins
     if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
@@ -1528,7 +1550,7 @@ function enemySpawn() { // (x, y, type, level, room)
     enemies.push(new Enemy(512, 120, 0, 0, 18));
 
     // Boss 0
-    enemies.push(new Enemy(120, 120, 0, 0, 20));
+    enemies.push(new Enemy(-690, -690, 1, 0, 20));
 
 }
 
