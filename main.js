@@ -1469,7 +1469,7 @@ class Enemy {
 
     die() {
         this.dead = true;
-        coinsDropped.push(new Coin(this.x, this.y, ENEMY_COIN[this.type], level, room));
+        if (!(level == 0 && room == 20)) coinsDropped.push(new Coin(this.x, this.y, ENEMY_COIN[this.type], level, room));
     }
 
     vision() {
