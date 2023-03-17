@@ -68,7 +68,7 @@ const bossX = 512;
 const bossY = 140;
 var bossHealth = 100;
 var bossAttack = 0;
-var bossTimer = 0;
+var bossTimer = 120;
 
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
@@ -176,6 +176,7 @@ function preload() { // Load sprites
     ENEMY_BULLET_SPRITES = [ENEMY0_BULLET, ENEMY1_BULLET, ENEMY2_BULLET, ENEMY3_BULLET];
 
     BOSS0 = [loadImage(PATH + "Enemy/1/boss1.png"),loadImage(PATH + "Enemy/1/boss2.png"),loadImage(PATH + "Enemy/1/boss3.png"),loadImage(PATH + "Enemy/1/boss4.png"),loadImage(PATH + "Enemy/1/boss5.png"),loadImage(PATH + "Enemy/1/boss6.png")]
+    SPAWN_INDICATOR = loadImage(PATH + "Enemy/spawn_indicator.png");
 
     BARRIER_HORIZONTAL = loadImage(PATH + "Tiles/barrier_horizontal.png");
     BARRIER_VERTICAL = loadImage(PATH + "Tiles/barrier_vertical.png");
@@ -1030,7 +1031,7 @@ function changeRoomFade() {
 }
 
 function boss() {
-    if (level == 0 && room == 20) {
+    if (level == 0 && room == 20 && bossHealth > 0) {
         drawImage(BOSS0[0], bossX, bossY);
 
         if (!paused && !playerDead) {
@@ -1044,14 +1045,35 @@ function boss() {
             }
     
             if (bossAttack == 1) { // Shoot player attack
-                if (bossTimer % 5 == 0 && (bossTimer < 70 || bossTimer > 110)) {
+                if (bossTimer % 5 == 0 && (bossTimer > 20 && bossTimer < 70 || (bossTimer > 120 && bossTimer < 180))) {
                     var bullet = new EnemyBullet(bossX, bossY, 0, true);
                     enemyBullets.push(bullet);
                 }
             }
+
+            if (bossAttack == 2) { // Summon enemies
+                var pattern;
+                if (bossTimer == 0) pattern = Math.floor(Math.random()*3) + 1;
+                pattern = 1;
+
+                if (bossTimer > 0 && bossTimer < 120 && Math.ceil(bossTimer/5) % 2 == 0) { // Enemy spawn indicator
+                    if (pattern == 1) {
+                        drawImage(SPAWN_INDICATOR, 124, 400);
+                        drawImage(SPAWN_INDICATOR, 900, 400);
+                    }
+                }
+
+                if (bossTimer == 120) { // Enemy spawns
+                    // (x, y, type, level, room)
+                    if (pattern == 1) { 
+                        enemies.push(new Enemy(124, 400, 0, 0, 20)); 
+                        enemies.push(new Enemy(900, 400, 0, 0, 20));
+                    }
+                }
+            }
     
             bossTimer++;
-            if (bossTimer >= 180) {
+            if (bossTimer >= 260) {
                 var temp = bossAttack;
                 bossAttack = Math.floor(Math.random()*3) + 1;
                 while (bossAttack == temp) bossAttack = Math.floor(Math.random()*3) + 1;
@@ -1445,7 +1467,7 @@ class EnemyBullet {
         var deltaY = playerY - this.y;
         var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))
         var divider = distance / ENEMY_BULLET_SPEED[this.type];
-        if (this.boss) divider = distance / 6;
+        if (this.boss) divider = distance / 7;
         
         this.dx = Math.round(deltaX / divider * 10)/10;
         this.dy = Math.round(deltaY / divider * 10)/10;
