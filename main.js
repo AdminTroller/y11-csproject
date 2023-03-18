@@ -590,12 +590,10 @@ function chest() {
 
                 if (keyIsDown(32)) {
                     chestRooms[i][3] = true;
-                    var type = Math.floor(Math.random()*5);
                     var gun = Math.floor(Math.random()*(GUN_SPRITES.length-1))+1;
 
-                    if (type == 0) gunsDropped.push([level, room, 512, 200, gun]);
+                    if (playerHealth >= 6) gunsDropped.push([level, room, 512, 200, gun]);
                     else heartsDropped.push([level, room, 512, 200]);
-                    if (playerHealth > 6) playerHealth = 6;
 
                     SFX_CHEST.setVolume(volume/100);
                     SFX_CHEST.play();
