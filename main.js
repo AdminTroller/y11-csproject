@@ -44,6 +44,7 @@ var playerAmmo = [gunAmmo[0], gunAmmo[1], gunAmmo[2], gunAmmo[3], gunAmmo[4]];
 var gunReload = [40, 60, 70, 60, 60];
 var playerReload = [gunReload[0], gunReload[1], gunReload[2], gunReload[3], gunReload[4]];
 var gunDamage = [1, 0.85, 0.5, 0.75, 5];
+var gunNames = ["Pistol", "Machine", "Gatling Gun", "Shotgun", "Sniper"];
 var startupCooldown = 30;
 
 var coins = 0;
@@ -569,6 +570,14 @@ function item() {
                 textSize(20);
                 text('Progress saved', 512, 340);
             }
+            else {
+                textFont(FONT_SANS);
+                textAlign(CENTER, CENTER);
+                strokeWeight(0);
+                fill(255, 160, 0);
+                textSize(20);
+                text('Heal & Save game', 512, 240);
+            }
         }
     }
 
@@ -628,6 +637,13 @@ function guns() {
             if (Math.abs(gunsDropped[i][2] - playerX) < 32 && Math.abs(gunsDropped[i][3] - playerY) < 32) {
                 drawImage(SPACE_INDICATOR, playerX, playerY - 40);
 
+                textFont(FONT_SANS);
+                textAlign(CENTER, CENTER);
+                strokeWeight(0);
+                fill(0);
+                textSize(16);
+                text(gunNames[gunsDropped[i][4]], playerX, playerY - 64);
+
                 if (keyIsDown(32) && gunsDroppedTemp) { // pickup gun on ground
                     if (playerGuns[0] != gunsDropped[i][4] && playerGuns[1] != gunsDropped[i][4]) {
                         if (playerGuns[1] == -1) {
@@ -681,6 +697,13 @@ function shop() {
                             drawImage(NUMBERS[Math.floor(Math.floor(shopPrices[shopRooms[i][j+4]] * shopRooms[i][2]) / 10)], itemX[j]-9, 260);
                             drawImage(NUMBERS[Math.floor(shopPrices[shopRooms[i][j+4]] * shopRooms[i][2]) % 10], itemX[j]+9, 260);
                         }
+
+                        textFont(FONT_SANS);
+                        textAlign(CENTER, CENTER);
+                        strokeWeight(0);
+                        fill(0);
+                        textSize(16);
+                        text(gunNames[shopRooms[i][j+4]], itemX[j], 220);
 
                         if (keyIsDown(32) && shopBuyTemp) { // Space pressed (buy item)
                             if (coins >= Math.floor(shopPrices[shopRooms[i][j+4]] * shopRooms[i][2]) && playerGuns[0] != shopRooms[i][j+4] && playerGuns[1] != shopRooms[i][j+4]) {
