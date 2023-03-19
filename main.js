@@ -964,7 +964,7 @@ function playerSave() {
 
             }
 
-            if (currentSave != i && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-44 && playerY < 288+44) {
+            if (currentSave != i && playerX >= 512-60 && playerX <= 512+60 && playerY >= 288-60 && playerY < 288+60) {
                 drawImage(SPACE_INDICATOR, playerX, playerY+40);
 
                 if (keyIsDown(32)) saveGame(i);
