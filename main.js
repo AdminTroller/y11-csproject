@@ -36,7 +36,7 @@ var playerGuns = [0, -1];
 var playerGun = 0;
 var playerBullets = [];
 const PLAYER_BULLET_SPEED = [12, 14, 9, 9, 22];
-const PLAYER_SLOWDOWN = [1, 0.9, 0.7, 0.7, 0.85];
+const PLAYER_SLOWDOWN = [1, 0.9, 0.75, 0.75, 0.85];
 var playerGunCooldowns = [20, 10, 6, 40, 40];
 var playerFiringCooldown = playerGunCooldowns[0];
 var gunAmmo = [10, 25, 45, 8, 2];
@@ -69,14 +69,14 @@ const bossX = 512;
 const bossY = 140;
 var bossHealth = 100;
 var bossAttack = 0;
-var bossTimer = 120;
+var bossTimer = 160;
 var bossPattern = 0;
 
 var chestRooms = [[0, 10, 0, false], [0, 21, 0, false]]; // [level, room, type, opened]
 var heartsDropped = [] // [level, room, x, y]
 
-var shopRooms = [[0, 11, 1, false, -1, -1], [0, 17, 1.3, false, -1, -1]]; // [level, room, multiplier, visited, item1, item2, item3]
-var shopPrices = [0, 8, 16, 12, 14];
+var shopRooms = [[0, 11, 1, false, -1, -1], [0, 17, 1.4, false, -1, -1]]; // [level, room, multiplier, visited, item1, item2, item3]
+var shopPrices = [0, 9, 16, 12, 14];
 
 var coinsDropped = [];
 const COIN_VALUE = [1, 3, 10];
@@ -787,7 +787,7 @@ function playerMovement() {
     if (okY) playerY += dy;
 
     if (level_clear[level][room]) {
-        playerSpeed = 7;
+        playerSpeed = 7 * PLAYER_SLOWDOWN[playerGuns[playerGun]];
         playerWalkDelay = 4;
     }
     else {
@@ -987,7 +987,7 @@ function playerDraw() {
     if (playerHurtTime >= PLAYER_HURT_TIME_BASE) {
         if (playerMoving) {
             drawImageSmooth(PLAYER_SPRITES[playerDir][playerWalkAnimation], playerX, playerY);
-            playerWalkTimer++;
+            if (!paused) playerWalkTimer++;
         }
         else {
             drawImage(PLAYER_SPRITES[1][3], playerX, playerY);
@@ -996,7 +996,7 @@ function playerDraw() {
     
         if (playerWalkTimer >= playerWalkDelay) {
             playerWalkTimer = 0;
-            playerWalkAnimation++
+            playerWalkAnimation++;
             if (playerWalkAnimation >= 8) playerWalkAnimation = 0;
         }
     }
@@ -1105,7 +1105,7 @@ function boss() {
                 if (bossTimer > 0 && bossTimer < 120 && Math.ceil(bossTimer/5) % 2 == 0) { // Enemy spawn indicator
                     if (bossPattern == 1) {
                         drawImage(SPAWN_INDICATOR, 124, 400);
-                        drawImage(SPAWN_INDICATOR, 124, 340);
+                        drawImage(SPAWN_INDICATOR, 124, 200);
                         drawImage(SPAWN_INDICATOR, 900, 400);
                     }
                     if (bossPattern == 2) {
@@ -1129,7 +1129,7 @@ function boss() {
                     // (x, y, type, level, room)
                     if (bossPattern == 1) { 
                         enemies.push(new Enemy(124, 400, 0, 0, 20)); 
-                        enemies.push(new Enemy(124, 340, 0, 0, 20)); 
+                        enemies.push(new Enemy(124, 200, 0, 0, 20)); 
                         enemies.push(new Enemy(900, 400, 0, 0, 20));
                     }
                     if (bossPattern == 2) { 
@@ -1151,7 +1151,7 @@ function boss() {
             }
     
             bossTimer++;
-            if (bossTimer >= 260) {
+            if (bossTimer >= 300) {
                 var temp = bossAttack;
                 bossAttack = Math.floor(Math.random()*2) + 1;
                 while (bossAttack == temp) bossAttack = Math.floor(Math.random()*2) + 1;
@@ -1627,7 +1627,7 @@ class Coin {
 }
 
 function debug() {
-    textSize(32);
+    // textSize(32);
     // if (keyIsDown(72)) coins = 900; // Debug 900 coins
     // if (keyIsDown(67)) playerSpeed = 16; // Debug fast
 }
