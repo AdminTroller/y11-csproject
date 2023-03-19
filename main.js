@@ -360,7 +360,7 @@ function menu() {
     textSize(16);
     text('Programming - Edmond', 512, 480);
     text('Music - Edmond', 512, 500);
-    text('Sprites - Isaac, mi_gusta', 512, 520);
+    text('Sprites - Isaac, mi_gusta (Zach)', 512, 520);
     text('Playtesting - Aaden, Isaac, Jovan, Leon, Chris, Addison', 512, 540);
 
     if (mouseIsPressed && mouseX >= 512 - 170 && mouseX <= 512 + 170 && mouseY >= 386 - 20 && mouseY <= 386 + 20) volumePressed = true;
