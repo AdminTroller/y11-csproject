@@ -220,8 +220,8 @@ function preload() { // Load sprites
     MUSIC_OVERWORLD.setVolume(volume/100);
     MUSIC_OVERWORLD2 = loadSound(PATH + 'Music/overworld2.mp3');
     MUSIC_OVERWORLD2.setVolume(volume/100);
-    MUSIC_BOSS = loadSound(PATH + 'Music/boss2.mp3');
-    MUSIC_BOSS.setVolume(volume/100);
+    MUSIC_BOSS1 = loadSound(PATH + 'Music/boss1.mp3');
+    MUSIC_BOSS1.setVolume(volume/100);
     MUSIC_CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
     MUSIC_CREDITS.setVolume(volume/60);
 
@@ -398,7 +398,7 @@ function credits() {
     cursor();
     MUSIC_OVERWORLD.stop();
     MUSIC_OVERWORLD2.stop();
-    MUSIC_BOSS.stop();
+    MUSIC_BOSS1.stop();
 
     drawImage(MENU_BACKGROUND, 512, 288);
     textAlign(CENTER, CENTER);
@@ -977,7 +977,7 @@ function playerDie() {
     playerDead = true;
     MUSIC_OVERWORLD.stop();
     MUSIC_OVERWORLD2.stop();
-    MUSIC_BOSS.stop();
+    MUSIC_BOSS1.stop();
     SFX_DEATH.setVolume(volume/100);
     SFX_DEATH.play();
 }
@@ -1057,11 +1057,11 @@ function changeRoomFade() {
             }
         }
 
-        if (level == 0 && room == 20 && !MUSIC_BOSS.isPlaying()) {
+        if (level == 0 && room == 20 && !MUSIC_BOSS1.isPlaying()) {
             inBoss = true;
             MUSIC_OVERWORLD.stop();
-            MUSIC_BOSS.setVolume(volume/100);
-            MUSIC_BOSS.loop();
+            MUSIC_BOSS1.setVolume(volume/100);
+            MUSIC_BOSS1.loop();
         }
     
     }
@@ -1277,10 +1277,10 @@ function pause() {
         if (paused) {
             MUSIC_OVERWORLD.pause();
             MUSIC_OVERWORLD2.pause();
-            MUSIC_BOSS.pause();
+            MUSIC_BOSS1.pause();
         }
         else {
-            if (inBoss) MUSIC_BOSS.play();
+            if (inBoss) MUSIC_BOSS1.play();
             else {
                 if (level == 0) MUSIC_OVERWORLD.play();
                 if (level == 1) MUSIC_OVERWORLD2.play();
