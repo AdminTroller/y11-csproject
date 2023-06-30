@@ -223,6 +223,7 @@ function preload() { // Load sprites
     MUSIC_BOSS1 = loadSound(PATH + 'Music/boss1.mp3');
     MUSIC_BOSS1.setVolume(volume/100);
     MUSIC_CREDITS = loadSound(PATH + 'Music/credits_final.mp3');
+    // MUSIC_CREDITS = loadSound(PATH + 'Music/credits_final_old.mp3'); // original singer got bullied too much (sorry 5iveZer0)
     MUSIC_CREDITS.setVolume(volume/60);
 
     SFX_DEATH = loadSound(PATH + 'SFX/death.mp3');
@@ -413,7 +414,7 @@ function credits() {
     strokeWeight(0);
     fill(60);
     textSize(24);
-    text('Special thanks to 5iveZer0 for singing this song', 512, 540);
+    // text('Special thanks to 5iveZer0 for singing this song', 512, 540); // she got bullied too much for it :/
 
     drawImage(BORDER, 512, 288);
 }
